@@ -16,7 +16,7 @@ h1{font-size:19px;margin:0 0 4px}.sub{font-size:12px;color:var(--muted);line-hei
 main{padding:12px;max-width:900px;margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.18)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
 label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-select{width:100%;border:1px solid #34536a;background:#08141e;color:var(--text);border-radius:12px;padding:11px;font-size:15px}
+select,textarea,input{width:100%;border:1px solid #34536a;background:#08141e;color:var(--text);border-radius:12px;padding:11px;font-size:15px} textarea{min-height:76px;resize:vertical}
 button{width:100%;border:0;border-radius:14px;padding:14px 16px;font-weight:900;font-size:16px;background:var(--accent);color:#00131f;margin-top:10px}
 .ghost{background:#1d3345;color:var(--text);border:1px solid #34536a}.hidden{display:none}
 .sectiontitle{font-size:13px;color:#9bdcf8;font-weight:900;margin:13px 0 5px;text-transform:uppercase;letter-spacing:.04em}
@@ -84,7 +84,11 @@ summary{font-weight:900;color:#d8f3ff;cursor:pointer}
 <div><label>Observed bait</label><select id="baitSeen"><option>No bait seen</option><option>Bait shallow</option><option>Bait mid-depth</option><option>Bait deep</option><option>Birds/surface activity</option></select></div>
 <div><label>Light</label><select id="sky"><option>Partly cloudy</option><option>Bright sun</option><option>Cloudy</option><option>Rain / low light</option><option>Night</option></select></div>
 <div><label>Preferred lure</label><select id="preferred"><option>Recommend for me</option><option>Ned rig</option><option>Drop shot</option><option>Swimbait</option><option>Crankbait</option><option>Spinnerbait</option><option>Chatterbait / bladed jig</option><option>Texas rig</option><option>Jig</option><option>Jerkbait</option><option>Topwater</option><option>Jig and minnow</option><option>Blade bait</option><option>Slip bobber/live bait</option><option>Trolling crankbait</option><option>Crappie jig</option><option>Crappie minnow rig</option><option>Road Runner / underspin</option></select></div>
+<div class="full"><label>Optional notes / what you see</label><textarea id="notes" placeholder="Example: bait on wind-blown point, fish suspended 12 ft over 25, short strikes..."></textarea></div>
+<div><button type="button" class="ghost" id="gpsBtn">Tag GPS Spot</button></div>
+<div><button type="button" class="ghost" id="voiceBtn">Voice Note</button></div>
 </div>
+<div id="gpsStatus" class="small" style="margin-top:8px"></div>
 </details>
 
 <button type="button" id="getPlanBtn">Get Elite Plan</button>
@@ -93,6 +97,7 @@ summary{font-weight:900;color:#d8f3ff;cursor:pointer}
 
 <div id="output" class="card hidden"></div>
 <div id="errorBox" class="card hidden" style="border-color:#ef4444;color:#ffd6d6"></div>
+<div class="card"><div class="sectiontitle">Pattern Memory</div><div class="small">Save what worked so the app gets more valuable every trip. Stored only on this phone/browser.</div><div class="copybar"><button type="button" class="ghost" id="viewPatternsBtn">View Saved Patterns</button><button type="button" class="ghost" id="clearPatternsBtn">Clear Saved Patterns</button></div><div id="patternsBox" class="hidden" style="margin-top:10px"></div></div>
 
 <div class="card">
 <div class="sectiontitle">Elite rule</div>
@@ -103,6 +108,7 @@ summary{font-weight:900;color:#d8f3ff;cursor:pointer}
 <script>
 const $=id=>document.getElementById(id).value;
 const has=(v,t)=>String(v).toLowerCase().includes(t);
+let lastPlan=null; let gpsTag='';
 
 function inferredForage(lake, cover, species){
  if($('forage')!=='Auto / Unknown') return $('forage');
@@ -259,6 +265,7 @@ function runEngine(){
  if(has(pressure,'high')) doNot.push('Do not rotate constantly; make repeated precise casts.');
  if(species==='Crappie') doNot.push('Do not fish below the school.');
  if(species==='Walleye') doNot.push('Do not ignore bait depth and low-light/wind windows.');
+ lastPlan={timestamp:new Date().toLocaleString(),species,lake,season,clarity,depth,cover,wind,mood,pressure,baitSeen,sky,forage,waterColor,tech,color:c.start[0],setup:d.setup,cast:d.cast,retrieve:d.retrieve,priority:pri,confidence:sc,notes:(document.getElementById('notes')?document.getElementById('notes').value:''),gps:gpsTag};
  let html=`
  <h2>Elite Plan</h2>
  <div class="score ${cls}">${sc}%</div>
@@ -285,7 +292,7 @@ function runEngine(){
  <div class="sectiontitle">Backup</div><ul><li><b>${backup(tech,species)}</b></li></ul>
  <div class="sectiontitle">Extra Dial-In</div><ul>${c.notes.map(n=>`<li>${n}</li>`).join('')}</ul>
  <div class="sectiontitle">Do Not Do This</div><ul>${doNot.map(a=>`<li>${a}</li>`).join('')}</ul>
- <div class="copybar"><button type="button" class="ghost" onclick="window.print()">Print / Save PDF</button><button type="button" class="ghost" onclick="copyPlan()">Copy Plan</button></div>
+ <div class="copybar"><button type="button" class="ghost" onclick="savePattern()">Save This Pattern</button><button type="button" class="ghost" onclick="copyPlan()">Copy Plan</button><button type="button" class="ghost" onclick="window.print()">Print / Save PDF</button><button type="button" class="ghost" onclick="showAdjustmentHelp()">What If It Failed?</button></div><div id="adjustHelp" class="hidden warnbox"></div>
  `;
  document.getElementById('output').classList.remove('hidden');
  document.getElementById('output').innerHTML=html;
@@ -296,6 +303,16 @@ function copyPlan(){
  const out=document.getElementById('output').innerText;
  if(navigator.clipboard){navigator.clipboard.writeText(out);}
 }
+
+function getPatterns(){try{return JSON.parse(localStorage.getItem('fishingPatternsV7')||'[]')}catch(e){return []}}
+function setPatterns(arr){localStorage.setItem('fishingPatternsV7',JSON.stringify(arr))}
+function savePattern(){if(!lastPlan){showError('Run a plan first, then save it.');return} const result=prompt('Result? Example: caught fish, no bites, followers, short strikes, keeper pattern','caught fish'); if(result===null)return; const arr=getPatterns(); arr.unshift({...lastPlan,result}); setPatterns(arr.slice(0,75)); renderPatterns(); alert('Pattern saved on this device.')}
+function renderPatterns(){const box=document.getElementById('patternsBox'); const arr=getPatterns(); box.classList.remove('hidden'); if(!arr.length){box.innerHTML='<div class="small">No saved patterns yet.</div>';return} box.innerHTML=arr.map(p=>`<div style="border:1px solid #294456;border-radius:12px;padding:10px;margin:8px 0;background:#0b1823"><div class="big">${p.species} • ${p.lake}</div><div class="small">${p.timestamp}${p.gps?' • GPS: '+p.gps:''}</div><div>${['Result: '+(p.result||''),'Lure: '+p.tech,'Color: '+p.color,'Depth: '+p.depth,'Cover: '+p.cover,'Confidence: '+p.confidence+'%'].map(x=>`<span class="pill">${x}</span>`).join('')}</div><ul><li><b>Cast:</b> ${p.cast}</li><li><b>Retrieve:</b> ${p.retrieve}</li>${p.notes?`<li><b>Notes:</b> ${p.notes}</li>`:''}</ul></div>`).join('')}
+function clearPatterns(){if(confirm('Clear all saved patterns from this device?')){localStorage.removeItem('fishingPatternsV7');renderPatterns()}}
+function showAdjustmentHelp(){const box=document.getElementById('adjustHelp'); if(!box)return; box.classList.remove('hidden'); box.innerHTML='<b>Fast failure diagnosis:</b><ul><li><b>No bites:</b> change depth/location first. Do not blame color yet.</li><li><b>Followers:</b> downsize, go natural, pause longer, use finesse follow-up.</li><li><b>Short strikes:</b> smaller profile, slower speed, trailer/stinger hook.</li><li><b>One bite:</b> repeat exact depth, cover, wind angle, and retrieve.</li><li><b>Marked fish:</b> put bait above them, lighten line, slow down, and use minnow/live-bait profile.</li></ul>'}
+function tagGPS(){const status=document.getElementById('gpsStatus'); if(!navigator.geolocation){status.textContent='GPS is not supported in this browser.';return} status.textContent='Getting GPS...'; navigator.geolocation.getCurrentPosition(pos=>{gpsTag=pos.coords.latitude.toFixed(5)+', '+pos.coords.longitude.toFixed(5); status.textContent='GPS tagged: '+gpsTag},err=>{status.textContent='GPS failed or permission denied. You can still use the engine.'})}
+function startVoiceNote(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition; const notes=document.getElementById('notes'); if(!SR){alert('Voice notes are not supported in this browser. Type your note instead.');return} const rec=new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=1; rec.onresult=e=>{const text=e.results[0][0].transcript; notes.value=(notes.value?notes.value+' ':'')+text}; rec.onerror=()=>alert('Voice note failed. Try typing it.'); rec.start()}
+
 function resetForm(){document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.getElementById('output').classList.add('hidden');document.getElementById('errorBox').classList.add('hidden');}
 function showError(err){
  const box=document.getElementById('errorBox');
@@ -305,19 +322,15 @@ function showError(err){
 document.addEventListener('DOMContentLoaded', function(){
  document.getElementById('getPlanBtn').addEventListener('click', function(e){e.preventDefault();runEngine();});
  document.getElementById('resetBtn').addEventListener('click', function(e){e.preventDefault();resetForm();});
+ const vp=document.getElementById('viewPatternsBtn'); if(vp) vp.addEventListener('click',e=>{e.preventDefault();renderPatterns()});
+ const cp=document.getElementById('clearPatternsBtn'); if(cp) cp.addEventListener('click',e=>{e.preventDefault();clearPatterns()});
+ const gps=document.getElementById('gpsBtn'); if(gps) gps.addEventListener('click',e=>{e.preventDefault();tagGPS()});
+ const voice=document.getElementById('voiceBtn'); if(voice) voice.addEventListener('click',e=>{e.preventDefault();startVoiceNote()});
 });
 window.addEventListener('error', function(e){showError(e.error || e.message);});
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js').catch(function(err) {
-      console.log('Service worker registration failed:', err);
-    });
-  });
-}
-</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./service-worker.js').catch(function(err){console.log('Service worker registration failed:',err);});});}</script>
 
 </body>
 </html>

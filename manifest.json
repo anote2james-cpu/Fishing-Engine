@@ -1,11 +1,11 @@
 {
-  "name": "Fishing Engine V6 Elite",
+  "name": "Fishing Engine V7 Elite",
   "short_name": "Fishing Engine",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#061018",
   "theme_color": "#061018",
-  "description": "Offline lure and fishing decision engine for largemouth, smallmouth, walleye, and crappie.",
+  "description": "Offline elite fishing decision engine with pattern memory for largemouth, smallmouth, walleye, and crappie.",
   "icons": [
     {
       "src": "icon-192.png",
