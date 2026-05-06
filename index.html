@@ -2,27 +2,34 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V10 Elite</title>
+<title>Fishing Engine V11 Elite</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#061018">
 <style>
-body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:10px}
-.card{background:#0f1c27;border-radius:12px;padding:12px;margin-bottom:10px}
-button{width:100%;padding:14px;margin-top:8px;border:none;border-radius:10px;font-weight:bold}
+body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
+.card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:16px;margin-top:10px;border:none;border-radius:12px;font-weight:bold;font-size:16px}
 .primary{background:#38bdf8;color:#000}
-.out{font-size:18px;font-weight:bold;margin:6px 0}
-.small{font-size:14px;margin:4px 0}
-.phase{color:#38bdf8;font-weight:bold}
+.out{font-size:20px;font-weight:bold;margin:8px 0}
+.small{font-size:14px;margin:4px 0;color:#cbd5e1}
+.phase{color:#38bdf8;font-weight:bold;margin-bottom:6px}
+select{width:100%;padding:12px;margin-top:6px;border-radius:10px;background:#08141e;color:#fff;border:1px solid #34536a}
 </style>
 </head>
 <body>
 
 <div class="card">
-<h3>Quick Mode</h3>
+<h3>Fishing Engine</h3>
 
 <select id="lake">
 <option>Generic Lake</option>
 <option>Laurel River Lake (KY)</option>
+<option>Lake St. Clair</option>
+<option>Kentucky Lake</option>
+<option>Guntersville</option>
+<option>Dale Hollow</option>
+<option>Table Rock</option>
+<option>Ohio River</option>
 </select>
 
 <select id="clarity">
@@ -51,52 +58,46 @@ if ('serviceWorker' in navigator) {
  navigator.serviceWorker.register('service-worker.js');
 }
 
-function isLaurel(){
- return document.getElementById("lake").value.includes("Laurel");
+function lakeType(lake){
+ if(lake.includes("Laurel")||lake.includes("Dale")||lake.includes("Rock")) return "deep";
+ if(lake.includes("St. Clair")||lake.includes("Guntersville")) return "shallow";
+ return "mixed";
 }
 
 function run(){
- let c=clarity.value;
- let d=depth.value;
- let co=cover.value;
- let a=activity.value;
+ let lake=document.getElementById('lake').value;
+ let clarity=document.getElementById('clarity').value;
+ let depth=document.getElementById('depth').value;
+ let cover=document.getElementById('cover').value;
+ let activity=document.getElementById('activity').value;
 
+ let type=lakeType(lake);
  let out=document.getElementById("out");
  out.style.display="block";
 
- if(d=="Unknown"){
-   if(isLaurel()){
-     out.innerHTML=`
-     <div class="phase">LAUREL SEARCH</div>
-     <div class="out">THROW: Swimbait – Natural</div>
-     <div class="small">START: 10–20 ft</div>
-     <div class="small">Focus: points + suspended fish</div>`;
-     return;
-   }
+ if(depth=="Unknown"){
+   let start = type=="deep"?"10–20 ft":"8–12 ft";
    out.innerHTML=`
    <div class="phase">SEARCH MODE</div>
-   <div class="out">THROW: Swimbait – White</div>
-   <div class="small">START: 8–12 ft</div>`;
+   <div class="out">THROW: Swimbait</div>
+   <div class="small">START: ${start}</div>
+   <div class="small">GOAL: Find activity</div>`;
    return;
  }
 
  let lure="Jig";
- if(isLaurel()){
-   lure = a=="Active"?"Swimbait":a=="Tough"?"Ned Rig":"Drop Shot";
- } else {
-   if(a=="Tough") lure="Ned Rig";
-   else if(co=="Rock") lure="Crankbait";
-   else if(co=="Grass") lure="Swimbait";
- }
+ if(type=="deep") lure=activity=="Tough"?"Drop Shot":"Swimbait";
+ if(type=="shallow") lure=activity=="Active"?"Spinnerbait":"Texas Rig";
+ if(activity=="Tough") lure="Ned Rig";
 
- let color=c=="Dirty"?"Black/Blue":c=="Clear"?"Natural":"White";
+ let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
 
  out.innerHTML=`
- <div class="phase">${isLaurel()?"LAUREL MODE":"STANDARD MODE"}</div>
+ <div class="phase">${lake}</div>
  <div class="out">THROW: ${lure} – ${color}</div>
- <div class="small">CAST: ${co}</div>
- <div class="small">DEPTH: ${d}</div>
- `;
+ <div class="small">CAST: ${cover}</div>
+ <div class="small">DEPTH: ${depth}</div>
+ <div class="small">ADJUST: depth first, then lure</div>`;
 }
 </script>
 
