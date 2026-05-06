@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V11 Elite</title>
+<title>Fishing Engine V12 Elite</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#061018">
 <style>
@@ -19,7 +19,7 @@ select{width:100%;padding:12px;margin-top:6px;border-radius:10px;background:#081
 <body>
 
 <div class="card">
-<h3>Fishing Engine</h3>
+<h3>Quick Mode</h3>
 
 <select id="lake">
 <option>Generic Lake</option>
@@ -48,6 +48,18 @@ select{width:100%;padding:12px;margin-top:6px;border-radius:10px;background:#081
 <option>Active</option><option>Neutral</option><option>Tough</option>
 </select>
 
+<select id="forage">
+<option>Shad</option><option>Bluegill</option><option>Crawfish</option><option>Mixed</option>
+</select>
+
+<select id="weather">
+<option>Sunny</option><option>Cloudy</option><option>Post-Front</option>
+</select>
+
+<select id="wind">
+<option>Calm</option><option>Windy</option>
+</select>
+
 <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 
@@ -58,46 +70,47 @@ if ('serviceWorker' in navigator) {
  navigator.serviceWorker.register('service-worker.js');
 }
 
-function lakeType(lake){
- if(lake.includes("Laurel")||lake.includes("Dale")||lake.includes("Rock")) return "deep";
- if(lake.includes("St. Clair")||lake.includes("Guntersville")) return "shallow";
- return "mixed";
-}
-
 function run(){
- let lake=document.getElementById('lake').value;
- let clarity=document.getElementById('clarity').value;
- let depth=document.getElementById('depth').value;
- let cover=document.getElementById('cover').value;
- let activity=document.getElementById('activity').value;
+ let lake=lakeEl.value;
+ let clarity=clarityEl.value;
+ let depth=depthEl.value;
+ let cover=coverEl.value;
+ let activity=activityEl.value;
+ let forage=forageEl.value;
+ let weather=weatherEl.value;
+ let wind=windEl.value;
 
- let type=lakeType(lake);
  let out=document.getElementById("out");
  out.style.display="block";
 
  if(depth=="Unknown"){
-   let start = type=="deep"?"10–20 ft":"8–12 ft";
    out.innerHTML=`
    <div class="phase">SEARCH MODE</div>
-   <div class="out">THROW: Swimbait</div>
-   <div class="small">START: ${start}</div>
-   <div class="small">GOAL: Find activity</div>`;
+   <div class="out">START: ${lake.includes("Laurel")?"10–20 ft":"8–12 ft"}</div>
+   <div class="small">Focus wind-blown structure</div>
+   <div class="small">Find bait first</div>`;
    return;
  }
 
  let lure="Jig";
- if(type=="deep") lure=activity=="Tough"?"Drop Shot":"Swimbait";
- if(type=="shallow") lure=activity=="Active"?"Spinnerbait":"Texas Rig";
- if(activity=="Tough") lure="Ned Rig";
+ if(forage=="Shad") lure="Swimbait";
+ if(forage=="Bluegill") lure="Swim Jig";
+ if(forage=="Crawfish") lure="Jig / Craw";
+ if(activity=="Tough") lure="Ned Rig / Drop Shot";
+
+ let location="Main lake point";
+ if(wind=="Windy") location="Wind-blown "+cover;
+ if(weather=="Post-Front") location="Deeper "+cover;
 
  let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
 
  out.innerHTML=`
  <div class="phase">${lake}</div>
  <div class="out">THROW: ${lure} – ${color}</div>
- <div class="small">CAST: ${cover}</div>
+ <div class="small">WHERE: ${location}</div>
  <div class="small">DEPTH: ${depth}</div>
- <div class="small">ADJUST: depth first, then lure</div>`;
+ <div class="small">WHY: ${forage} + ${wind} + ${weather}</div>
+ `;
 }
 </script>
 
