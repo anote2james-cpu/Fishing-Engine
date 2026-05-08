@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fishing Engine V12 Upgraded</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
+.card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;font-weight:bold}
+.primary{background:#38bdf8;color:#000}
+.small{font-size:13px;color:#cbd5e1}
+.out{font-size:18px;font-weight:bold;margin:6px 0}
+select{width:100%;padding:10px;margin-top:6px;border-radius:8px;background:#08141e;color:#fff}
+.hidden{display:none}
+label{font-size:13px;color:#9fb3c8}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h3>Fishing Engine</h3>
+
+<label>Lake</label>
+<select id="lake" onchange="applyLake()">
+<option>Laurel River Lake</option>
+<option>Lake Cumberland</option>
+<option>Wood Creek Lake</option>
+<option>Kentucky Lake</option>
+<option>Chickamauga</option>
+<option>Dale Hollow</option>
+<option>Cherokee</option>
+<option>Norris</option>
+<option>St. Clair</option>
+<option>Erie</option>
+<option>Guntersville</option>
+<option>Okeechobee</option>
+</select>
+
+<label>Water Clarity</label>
+<select id="clarity">
+<option value="">Select Water Clarity...</option>
+<option>Clear</option>
+<option>Stained</option>
+<option>Dirty</option>
+</select>
+
+<label>Depth</label>
+<select id="depth">
+<option value="">Select Depth...</option>
+<option>Unknown</option>
+<option>Shallow</option>
+<option>Mid</option>
+<option>Deep</option>
+</select>
+
+<label>Cover Type</label>
+<select id="cover">
+<option value="">Select Cover...</option>
+<option>Rock</option>
+<option>Grass</option>
+<option>Wood</option>
+<option>Open</option>
+</select>
+
+<button onclick="toggle()">Dial It In</button>
+
+<div id="adv" class="hidden">
+<label>Forage</label>
+<select id="forage">
+<option value="">Auto (from lake)</option>
+<option>Shad</option>
+<option>Bluegill</option>
+<option>Crawfish</option>
+</select>
+
+<label>Weather</label>
+<select id="weather">
+<option value="">Select Weather...</option>
+<option>Sunny</option>
+<option>Cloudy</option>
+<option>Post-Front</option>
+</select>
+
+<label>Wind</label>
+<select id="wind">
+<option value="">Select Wind...</option>
+<option>Calm</option>
+<option>Windy</option>
+</select>
+</div>
+
+<button class="primary" onclick="run()">THROW THIS</button>
+</div>
+
+<div id="out" class="card hidden"></div>
+
+<script>
+const lakeProfiles = {
+ "Laurel River Lake":{forage:"Shad",cover:"Rock"},
+ "Lake Cumberland":{forage:"Shad",cover:"Rock"},
+ "Wood Creek Lake":{forage:"Bluegill",cover:"Wood"},
+ "Kentucky Lake":{forage:"Shad",cover:"Grass"},
+ "Chickamauga":{forage:"Shad",cover:"Grass"},
+ "Dale Hollow":{forage:"Shad",cover:"Rock"},
+ "Cherokee":{forage:"Shad",cover:"Rock"},
+ "Norris":{forage:"Shad",cover:"Rock"},
+ "St. Clair":{forage:"Perch",cover:"Grass"},
+ "Erie":{forage:"Gobies",cover:"Rock"},
+ "Guntersville":{forage:"Shad",cover:"Grass"},
+ "Okeechobee":{forage:"Bluegill",cover:"Grass"}
+};
+
+function applyLake(){
+ let lake = document.getElementById("lake").value;
+ let profile = lakeProfiles[lake];
+ if(!document.getElementById("forage").value){
+  document.getElementById("forage").value = profile.forage;
+ }
+ if(!document.getElementById("cover").value){
+  document.getElementById("cover").value = profile.cover;
+ }
+}
+
+function toggle(){
+ document.getElementById("adv").classList.toggle("hidden");
+}
+
+function confidence(){
+ let c=50;
+ if(document.getElementById("forage").value) c+=15;
+ if(document.getElementById("weather").value) c+=10;
+ if(document.getElementById("wind").value) c+=10;
+ if(document.getElementById("depth").value) c+=15;
+ return c;
+}
+
+function run(){
+ let depth=depthEl.value||"Unknown";
+ let clarity=clarityEl.value||"Stained";
+ let cover=coverEl.value||"Mixed";
+ let forage=forageEl.value||"Shad";
+ let wind=windEl.value;
+
+ let lures=["Swimbait","Jig","Ned Rig"];
+
+ if(forage=="Crawfish") lures=["Jig","Crankbait","Ned Rig"];
+ if(forage=="Bluegill") lures=["Swim Jig","Texas Rig","Topwater"];
+
+ let loc="Main structure";
+ if(wind=="Windy") loc="Wind-blown "+cover;
+ if(depth=="Unknown") loc="Search 8–12 ft";
+
+ let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
+
+ let out=document.getElementById("out");
+ out.innerHTML=`
+<div class="out">WHERE: ${loc}</div>
+<div class="out">TOP 3:</div>
+<div class="small">1. ${lures[0]} – ${color}</div>
+<div class="small">2. ${lures[1]}</div>
+<div class="small">3. ${lures[2]}</div>
+<div class="small">CONFIDENCE: ${confidence()}%</div>
+`;
+ out.classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
