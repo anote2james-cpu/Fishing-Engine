@@ -2,16 +2,16 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V13 Elite FINAL</title>
+<title>Fishing Engine V13 Elite</title>
 <style>
 body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
 .card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
 button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;font-weight:bold}
 .primary{background:#38bdf8;color:#000}
-.small{font-size:14px;color:#cbd5e1}
+.small{font-size:14px;color:#cbd5e1;margin:4px 0}
 .out{font-size:18px;font-weight:bold;margin:8px 0}
 select,input{width:100%;padding:10px;margin-top:6px;border-radius:8px;background:#08141e;color:#fff;border:none}
-img{width:100%;border-radius:12px;margin:12px 0}
+img{width:100%;border-radius:12px;margin:10px 0}
 label{font-size:13px;color:#9fb3c8}
 .note{font-size:12px;color:#7dd3fc;margin-top:6px}
 </style>
@@ -42,7 +42,7 @@ label{font-size:13px;color:#9fb3c8}
 </div>
 
 <label>Water Temp (°F)</label>
-<input id="temp" type="number" placeholder="ex: 58">
+<input id="temp" type="number" placeholder="ex: 55">
 
 <label>Water Clarity</label>
 <select id="clarity">
@@ -95,17 +95,23 @@ function getSeason(t){
 }
 
 function getColors(c){
- if(c==="Clear") return ["Natural Shad","Green Pumpkin","Ghost Minnow"];
+ if(c==="Clear") return ["Green Pumpkin","Watermelon Red","Natural Shad"];
  if(c==="Stained") return ["White","Chartreuse Shad","Green Pumpkin Purple"];
- return ["Black/Blue","Junebug","Chartreuse Black"];
+ return ["Black/Blue","Junebug","Black/Chartreuse"];
 }
 
 function getRetrieve(s){
- if(s==="Winter") return "Slow drag or dead stick";
- if(s==="Pre-Spawn") return "Slow roll with pauses";
+ if(s==="Winter") return "Slow drag / dead stick";
+ if(s==="Pre-Spawn") return "Slow roll + pauses";
  if(s==="Spawn") return "Target beds slowly";
  if(s==="Post-Spawn") return "Medium retrieve reaction";
  return "Fast aggressive retrieve";
+}
+
+function getImage(lure){
+ if(lure==="Swimbait") return "https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg";
+ if(lure==="Jig") return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg";
+ return "https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg";
 }
 
 function run(){
@@ -123,15 +129,17 @@ function run(){
  if(season==="Pre-Spawn") location="Secondary points leading to spawning flats";
  else if(season==="Spawn") location="Shallow bedding areas near cover";
  else if(season==="Post-Spawn") location="First drop-offs outside spawning flats";
- else location="Main lake deeper structure";
+ else if(season==="Summer") location="Offshore structure / deep grass edges";
+ else location="Deep structure near bait";
 
  if(wind!=="Calm") location="Wind-blown "+location;
 
- let lures=["Swimbait","Jig","Texas Rig"];
+ let lures=["Swimbait","Jig","Soft Plastic"];
 
  let confidence=60;
  if(temp) confidence+=10;
  if(wind) confidence+=10;
+ confidence=Math.min(confidence,100);
 
  let out=document.getElementById("out");
  out.innerHTML=`
@@ -141,15 +149,16 @@ function run(){
 <div class="out">TOP 3:</div>
 
 <div class="small">1. ${lures[0]}</div>
-<img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg">
+<img src="${getImage(lures[0])}">
+
+<div class="small">Colors: ${colors.join(" • ")}</div>
 
 <div class="small">2. ${lures[1]}</div>
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg">
+<img src="${getImage(lures[1])}">
 
 <div class="small">3. ${lures[2]}</div>
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg">
+<img src="${getImage(lures[2])}">
 
-<div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
 <div class="small">CONFIDENCE: ${confidence}%</div>
 `;
