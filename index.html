@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V13 Elite</title>
+<title>Fishing Engine V13 Elite FINAL</title>
 <style>
 body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
 .card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
@@ -11,8 +11,9 @@ button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;fo
 .small{font-size:14px;color:#cbd5e1}
 .out{font-size:18px;font-weight:bold;margin:8px 0}
 select,input{width:100%;padding:10px;margin-top:6px;border-radius:8px;background:#08141e;color:#fff;border:none}
-img{width:100%;border-radius:10px;margin:10px 0}
+img{width:100%;border-radius:12px;margin:12px 0}
 label{font-size:13px;color:#9fb3c8}
+.note{font-size:12px;color:#7dd3fc;margin-top:6px}
 </style>
 </head>
 <body>
@@ -20,8 +21,28 @@ label{font-size:13px;color:#9fb3c8}
 <div class="card">
 <h3>Fishing Engine V13 Elite</h3>
 
+<label>Lake</label>
+<select id="lake" onchange="applyLake()">
+<option>Unknown Body of Water</option>
+<option>Laurel River Lake</option>
+<option>Lake Cumberland</option>
+<option>St. Clair</option>
+</select>
+
+<div id="profileNote" class="note"></div>
+
+<div id="depthGroup">
+<label>Depth</label>
+<select id="depth">
+<option value="">Auto</option>
+<option>Shallow</option>
+<option>Mid</option>
+<option>Deep</option>
+</select>
+</div>
+
 <label>Water Temp (°F)</label>
-<input id="temp" type="number" placeholder="ex: 52">
+<input id="temp" type="number" placeholder="ex: 58">
 
 <label>Water Clarity</label>
 <select id="clarity">
@@ -40,65 +61,103 @@ label{font-size:13px;color:#9fb3c8}
 <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 
-<div id="out" class="card"></div>
+<div id="out" class="card hidden"></div>
 
 <script>
 
-function getSeason(temp){
- if(temp < 50) return "Winter";
- if(temp < 60) return "Pre-Spawn";
- if(temp < 70) return "Spawn";
- if(temp < 80) return "Post-Spawn";
+const lakeProfiles={
+ "Laurel River Lake":{depth:"Mid"},
+ "Lake Cumberland":{depth:"Mid"},
+ "St. Clair":{depth:"Shallow"}
+};
+
+function applyLake(){
+ let lake=document.getElementById("lake").value;
+ let note=document.getElementById("profileNote");
+
+ if(lake!=="Unknown Body of Water"){
+   let p=lakeProfiles[lake];
+   document.getElementById("depth").value=p.depth;
+   document.getElementById("depthGroup").style.display="none";
+   note.innerText="Using "+lake+" profile";
+ }else{
+   document.getElementById("depthGroup").style.display="block";
+   note.innerText="";
+ }
+}
+
+function getSeason(t){
+ if(t<50) return "Winter";
+ if(t<60) return "Pre-Spawn";
+ if(t<70) return "Spawn";
+ if(t<80) return "Post-Spawn";
  return "Summer";
 }
 
-function getColors(clarity){
- if(clarity==="Clear") return ["Natural Shad","Green Pumpkin","Translucent"];
- if(clarity==="Stained") return ["White","Chartreuse Shad","Green Pumpkin Purple"];
+function getColors(c){
+ if(c==="Clear") return ["Natural Shad","Green Pumpkin","Ghost Minnow"];
+ if(c==="Stained") return ["White","Chartreuse Shad","Green Pumpkin Purple"];
  return ["Black/Blue","Junebug","Chartreuse Black"];
 }
 
-function getRetrieve(season){
- if(season==="Winter") return "Slow drag or dead stick";
- if(season==="Pre-Spawn") return "Slow to medium with pauses";
- if(season==="Spawn") return "Target beds, slow presentations";
- if(season==="Post-Spawn") return "Reaction baits, medium retrieve";
- return "Fast, aggressive retrieve";
+function getRetrieve(s){
+ if(s==="Winter") return "Slow drag or dead stick";
+ if(s==="Pre-Spawn") return "Slow roll with pauses";
+ if(s==="Spawn") return "Target beds slowly";
+ if(s==="Post-Spawn") return "Medium retrieve reaction";
+ return "Fast aggressive retrieve";
 }
 
 function run(){
- let tempVal=parseFloat(document.getElementById("temp").value)||60;
+
+ let temp=parseFloat(document.getElementById("temp").value)||60;
  let clarity=document.getElementById("clarity").value;
  let wind=document.getElementById("wind").value;
+ let depth=document.getElementById("depth").value||"Mid";
 
- let season=getSeason(tempVal);
+ let season=getSeason(temp);
  let colors=getColors(clarity);
+ let retrieve=getRetrieve(season);
 
  let location="";
  if(season==="Pre-Spawn") location="Secondary points leading to spawning flats";
  else if(season==="Spawn") location="Shallow bedding areas near cover";
  else if(season==="Post-Spawn") location="First drop-offs outside spawning flats";
- else location="Main lake structure and deeper water";
+ else location="Main lake deeper structure";
 
- if(wind!=="Calm") location="Wind-blown " + location;
+ if(wind!=="Calm") location="Wind-blown "+location;
 
- let retrieve=getRetrieve(season);
+ let lures=["Swimbait","Jig","Texas Rig"];
+
+ let confidence=60;
+ if(temp) confidence+=10;
+ if(wind) confidence+=10;
 
  let out=document.getElementById("out");
  out.innerHTML=`
 <div class="out">SEASON: ${season}</div>
 <div class="out">WHERE: ${location}</div>
 
-<div class="out">TOP LURE:</div>
+<div class="out">TOP 3:</div>
+
+<div class="small">1. ${lures[0]}</div>
 <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg">
 
-<div class="small">Color Options:</div>
-<div class="small">${colors.join(" • ")}</div>
+<div class="small">2. ${lures[1]}</div>
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg">
 
+<div class="small">3. ${lures[2]}</div>
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg">
+
+<div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
+<div class="small">CONFIDENCE: ${confidence}%</div>
 `;
 
+ out.classList.remove("hidden");
 }
+
+applyLake();
 
 </script>
 </body>
