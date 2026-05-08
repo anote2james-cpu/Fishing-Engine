@@ -1,336 +1,104 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Fishing Engine V6 Elite</title>
-<style>
-:root{
-  --bg:#051018;--card:#101d28;--card2:#0b1823;--text:#f7fafc;--muted:#aab8c6;
-  --accent:#38bdf8;--line:#294456;--good:#22c55e;--warn:#f59e0b;--bad:#ef4444;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#061018,#0b1722);color:var(--text)}
-header{position:sticky;top:0;z-index:10;background:rgba(6,16,24,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px}
-h1{font-size:19px;margin:0 0 4px}.sub{font-size:12px;color:var(--muted);line-height:1.35}
-main{padding:12px;max-width:900px;margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.18)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
-label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-select,textarea,input{width:100%;border:1px solid #34536a;background:#08141e;color:var(--text);border-radius:12px;padding:11px;font-size:15px} textarea{min-height:76px;resize:vertical}
-button{width:100%;border:0;border-radius:14px;padding:14px 16px;font-weight:900;font-size:16px;background:var(--accent);color:#00131f;margin-top:10px}
-.ghost{background:#1d3345;color:var(--text);border:1px solid #34536a}.hidden{display:none}
-.sectiontitle{font-size:13px;color:#9bdcf8;font-weight:900;margin:13px 0 5px;text-transform:uppercase;letter-spacing:.04em}
-.big{font-size:18px;font-weight:900;margin:6px 0}.small{font-size:13px;color:var(--muted);line-height:1.4}
-.score{font-size:34px;font-weight:900;margin:6px 0}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-.pill{display:inline-block;padding:5px 8px;border-radius:999px;background:#1d3345;border:1px solid #34536a;margin:3px 4px 3px 0;font-size:12px;color:#d8e8f5}
-.first{background:linear-gradient(180deg,#122b3c,#0e2230);border:1px solid #4a7a95;border-radius:16px;padding:14px;margin:8px 0}
-.first .big{font-size:21px}
-.row{display:grid;grid-template-columns:105px 1fr;gap:8px;margin:5px 0;font-size:14px;line-height:1.35}
-.key{color:#9bdcf8;font-weight:900}.val{font-weight:700}
-ul{margin:7px 0 0 20px;padding:0}li{margin:5px 0;font-size:14px;line-height:1.35}
-details{border:1px solid var(--line);border-radius:14px;padding:10px;background:#0b1823;margin-top:10px}
-summary{font-weight:900;color:#d8f3ff;cursor:pointer}
-.warnbox{background:#211808;border:1px solid #6b4b12;color:#ffe8b0;border-radius:12px;padding:10px;margin-top:8px;font-size:13px;line-height:1.4}
-.copybar{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.copybar{grid-template-columns:1fr}h1{font-size:18px}.row{grid-template-columns:92px 1fr}}
-</style>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fishing Engine V12 Core</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#061018">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Fishing Engine">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icon-192.png">
-
+<style>
+body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
+.card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
+button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;font-weight:bold}
+.primary{background:#38bdf8;color:#000}
+.small{font-size:13px;color:#cbd5e1}
+.out{font-size:18px;font-weight:bold;margin:6px 0}
+select{width:100%;padding:10px;margin-top:6px;border-radius:8px;background:#08141e;color:#fff}
+.hidden{display:none}
+</style>
 </head>
 <body>
-<header>
-<h1>Fishing Engine V6 Elite</h1>
-<div class="sub">Fast first-cast decision + adjustment logic. Largemouth, smallmouth, walleye, and crappie.</div>
-</header>
-
-<main>
-<div class="card">
-<div class="sectiontitle">Fast Mode — use this in the boat</div>
-<div class="grid">
-<div><label>Species</label><select id="species"><option>Largemouth</option><option>Smallmouth</option><option>Walleye</option><option>Crappie</option></select></div>
-<div><label>Lake / lake type</label><select id="lake">
-<option>Generic / Unknown Lake</option>
-<option>TYPE: Clear Deep Reservoir</option>
-<option>TYPE: Grass Lake</option>
-<option>TYPE: River System / Current Lake</option>
-<option>TYPE: Natural Northern Lake</option>
-<option>TYPE: Shallow Stained Wood Lake</option>
-<option>TYPE: Big Water / Great Lakes</option>
-<option>TYPE: Southern Shallow Muddy Lake</option>
-<option>TYPE: Dock / Brush Reservoir</option>
-<option>Lake St. Clair</option><option>Lake Cumberland</option><option>Dale Hollow</option><option>Kentucky Lake / Barkley</option>
-<option>Guntersville</option><option>Chickamauga</option><option>Pickwick</option><option>Lake Erie</option><option>Reelfoot</option><option>Okeechobee</option><option>Lake of the Ozarks</option>
-</select></div>
-<div><label>Season</label><select id="season"><option>Pre-spawn</option><option>Spawn</option><option>Post-spawn</option><option>Summer</option><option>Fall</option><option>Winter</option></select></div>
-<div><label>Water clarity</label><select id="clarity"><option>Clear: 3–6 ft</option><option>Ultra clear: 6 ft+</option><option>Stained: 1–3 ft</option><option>Dirty: under 1 ft</option></select></div>
-<div><label>Depth</label><select id="depth"><option>0–4 ft</option><option>5–10 ft</option><option>11–20 ft</option><option>21–35 ft</option><option>35+ ft</option></select></div>
-<div><label>Cover / structure</label><select id="cover"><option>Rock / gravel</option><option>Grass / vegetation</option><option>Wood / laydowns</option><option>Brush pile / stake bed</option><option>Docks / shade</option><option>Open water / bait</option><option>Channel edge / breakline</option><option>Bluff / steep bank</option><option>Shell bed / ledge</option></select></div>
-<div><label>Wind / current</label><select id="wind"><option>Light ripple/current</option><option>Calm / no current</option><option>Moderate wind/current</option><option>Heavy wind/current</option></select></div>
-<div><label>Fish position / mood</label><select id="mood"><option>Unknown / no signs</option><option>Active: chasing bait</option><option>Neutral: occasional bites</option><option>Tough: follows or no bites</option><option>Bottom-oriented</option><option>Suspended</option><option>Schools visible</option></select></div>
-</div>
-
-<details>
-<summary>Advanced Mode — optional dial-in</summary>
-<div class="grid" style="margin-top:10px">
-<div><label>Forage</label><select id="forage"><option>Auto / Unknown</option><option>Shad / herring</option><option>Alewife</option><option>Bluegill / sunfish</option><option>Perch</option><option>Goby / sculpin</option><option>Crawfish</option><option>Minnows / shiners</option></select></div>
-<div><label>Water color</label><select id="waterColor"><option>Auto / typical</option><option>Clear / blue</option><option>Green stain / algae</option><option>Brown mud / runoff</option><option>Tannic / tea colored</option></select></div>
-<div><label>Pressure</label><select id="pressure"><option>Moderate</option><option>Low</option><option>High / pressured</option></select></div>
-<div><label>Observed bait</label><select id="baitSeen"><option>No bait seen</option><option>Bait shallow</option><option>Bait mid-depth</option><option>Bait deep</option><option>Birds/surface activity</option></select></div>
-<div><label>Light</label><select id="sky"><option>Partly cloudy</option><option>Bright sun</option><option>Cloudy</option><option>Rain / low light</option><option>Night</option></select></div>
-<div><label>Preferred lure</label><select id="preferred"><option>Recommend for me</option><option>Ned rig</option><option>Drop shot</option><option>Swimbait</option><option>Crankbait</option><option>Spinnerbait</option><option>Chatterbait / bladed jig</option><option>Texas rig</option><option>Jig</option><option>Jerkbait</option><option>Topwater</option><option>Jig and minnow</option><option>Blade bait</option><option>Slip bobber/live bait</option><option>Trolling crankbait</option><option>Crappie jig</option><option>Crappie minnow rig</option><option>Road Runner / underspin</option></select></div>
-<div class="full"><label>Optional notes / what you see</label><textarea id="notes" placeholder="Example: bait on wind-blown point, fish suspended 12 ft over 25, short strikes..."></textarea></div>
-<div><button type="button" class="ghost" id="gpsBtn">Tag GPS Spot</button></div>
-<div><button type="button" class="ghost" id="voiceBtn">Voice Note</button></div>
-</div>
-<div id="gpsStatus" class="small" style="margin-top:8px"></div>
-</details>
-
-<button type="button" id="getPlanBtn">Get Elite Plan</button>
-<button type="button" class="ghost" id="resetBtn">Reset</button>
-</div>
-
-<div id="output" class="card hidden"></div>
-<div id="errorBox" class="card hidden" style="border-color:#ef4444;color:#ffd6d6"></div>
-<div class="card"><div class="sectiontitle">Pattern Memory</div><div class="small">Save what worked so the app gets more valuable every trip. Stored only on this phone/browser.</div><div class="copybar"><button type="button" class="ghost" id="viewPatternsBtn">View Saved Patterns</button><button type="button" class="ghost" id="clearPatternsBtn">Clear Saved Patterns</button></div><div id="patternsBox" class="hidden" style="margin-top:10px"></div></div>
 
 <div class="card">
-<div class="sectiontitle">Elite rule</div>
-<div class="small">The first decision is usually not color. It is <b>fish position + depth + speed</b>. Color dials it in after you are around fish.</div>
+<h3>Quick Mode</h3>
+
+<select id="lake">
+<option>Laurel River Lake</option>
+<option>Lake Cumberland</option>
+<option>Wood Creek Lake</option>
+<option>Kentucky Lake</option>
+<option>Chickamauga</option>
+<option>Dale Hollow</option>
+<option>Cherokee</option>
+<option>Norris</option>
+<option>St. Clair</option>
+<option>Erie</option>
+<option>Guntersville</option>
+<option>Okeechobee</option>
+</select>
+
+<select id="clarity"><option>Clear</option><option>Stained</option><option>Dirty</option></select>
+<select id="depth"><option>Unknown</option><option>Shallow</option><option>Mid</option><option>Deep</option></select>
+<select id="cover"><option>Rock</option><option>Grass</option><option>Wood</option><option>Open</option></select>
+
+<button onclick="toggle()">Dial It In</button>
+
+<div id="adv" class="hidden">
+<select id="forage"><option value="">Forage?</option><option>Shad</option><option>Bluegill</option><option>Crawfish</option></select>
+<select id="weather"><option value="">Weather?</option><option>Sunny</option><option>Cloudy</option><option>Post-Front</option></select>
+<select id="wind"><option value="">Wind?</option><option>Calm</option><option>Windy</option></select>
 </div>
-</main>
+
+<button class="primary" onclick="run()">THROW THIS</button>
+</div>
+
+<div id="out" class="card hidden"></div>
 
 <script>
-const $=id=>document.getElementById(id).value;
-const has=(v,t)=>String(v).toLowerCase().includes(t);
-let lastPlan=null; let gpsTag='';
-
-function inferredForage(lake, cover, species){
- if($('forage')!=='Auto / Unknown') return $('forage');
- if(has(lake,'st. clair')) return 'Goby / sculpin';
- if(has(lake,'cumberland')||has(lake,'dale')||has(lake,'clear deep')) return 'Alewife';
- if(has(lake,'erie')||species==='Walleye'||species==='Crappie') return 'Minnows / shiners';
- if(has(lake,'natural northern')) return 'Perch';
- if(has(lake,'grass')||has(cover,'grass')||has(lake,'okeechobee')) return 'Bluegill / sunfish';
- if(has(lake,'river')||has(lake,'guntersville')||has(lake,'kentucky')||has(lake,'chickamauga')||has(lake,'pickwick')) return 'Shad / herring';
- return 'Auto / Unknown';
+function toggle(){
+ let a=document.getElementById("adv");
+ a.classList.toggle("hidden");
 }
 
-function chooseTech(species,lake,season,clarity,depth,cover,wind,mood,forage,pressure,baitSeen,preferred,sky){
- if(preferred!=='Recommend for me') return preferred;
- let active=has(mood,'active')||has(mood,'schools')||has(baitSeen,'birds')||has(wind,'moderate')||has(wind,'heavy');
- let tough=has(mood,'tough')||has(pressure,'high')||has(wind,'calm');
- let deep=has(depth,'21')||has(depth,'35');
- let suspended=has(mood,'suspended')||has(cover,'open')||has(baitSeen,'mid')||has(baitSeen,'deep');
-
- if(species==='Crappie'){
-   if(has(cover,'brush')||has(cover,'wood')||has(cover,'docks')) return has(clarity,'dirty')?'Crappie minnow rig':'Crappie jig';
-   if(suspended||has(mood,'schools')) return 'Crappie jig';
-   if(active) return 'Road Runner / underspin';
-   return tough?'Crappie minnow rig':'Crappie jig';
- }
- if(species==='Walleye'){
-   if(has(lake,'erie') && (active||suspended)) return 'Trolling crankbait';
-   if(deep||has(mood,'bottom')) return has(season,'Winter')?'Blade bait':'Jig and minnow';
-   if(suspended||active) return has(wind,'moderate')||has(wind,'heavy')?'Trolling crankbait':'Swimbait';
-   return tough?'Slip bobber/live bait':'Jig and minnow';
- }
- if(species==='Smallmouth'){
-   if((has(season,'Winter')||has(season,'Pre')) && active && (has(clarity,'clear')||has(clarity,'ultra'))) return 'Jerkbait';
-   if(tough) return deep||suspended?'Drop shot':'Ned rig';
-   if(active && (has(forage,'shad')||has(forage,'alewife')||has(forage,'perch')||has(cover,'open'))) return 'Swimbait';
-   if(active && has(cover,'rock')) return 'Crankbait';
-   return has(cover,'rock')?'Ned rig':'Drop shot';
- }
- if(has(sky,'night')||has(sky,'rain')) return 'Topwater';
- if(has(cover,'grass') && active) return 'Chatterbait / bladed jig';
- if((has(cover,'grass')||has(cover,'wood')||has(cover,'docks')) && tough) return 'Texas rig';
- if(has(cover,'grass')||has(cover,'wood')||has(cover,'docks')) return 'Jig';
- if(active && !has(clarity,'ultra') && (has(wind,'moderate')||has(wind,'heavy'))) return 'Spinnerbait';
- if(active && (has(cover,'rock')||has(cover,'shell')||has(season,'Pre')||has(season,'Fall'))) return 'Crankbait';
- return 'Jig';
+function confidenceScore(){
+ let score=50;
+ if(document.getElementById("forage").value) score+=15;
+ if(document.getElementById("weather").value) score+=10;
+ if(document.getElementById("wind").value) score+=10;
+ if(document.getElementById("depth").value!="Unknown") score+=15;
+ return score;
 }
 
-function colorPlan(species,forage,clarity,waterColor,wind,pressure){
- let start=[], backup=[], notes=[];
- if(species==='Crappie'){
-   start=has(clarity,'dirty')?['black/chartreuse','orange/chartreuse','solid white/glow']:has(clarity,'stained')?['chartreuse/white','electric chicken','blue/chartreuse']:['monkey milk','natural shad','blue ice'];
-   notes.push('Crappie: stay above the school; fall rate often beats color.');
- } else if(species==='Walleye'){
-   start=has(clarity,'dirty')?['black/gold','chartreuse/orange','glow white']:has(clarity,'stained')?['chartreuse/white','firetiger','gold/orange']:['purple/smoke','natural minnow','silver/blue'];
-   notes.push('Walleye: bait depth and light level usually outrank lure color.');
- } else if(has(forage,'goby')) start=['green pumpkin goby','brown/purple','smoke copper'];
- else if(has(forage,'alewife')) start=['pearl smoke','natural alewife','silver/blue'];
- else if(has(forage,'shad')) start=['pearl white','silver shad','smoke shad'];
- else if(has(forage,'bluegill')) start=['green pumpkin bluegill','green/blue flake','orange throat'];
- else if(has(forage,'perch')) start=['olive perch','green/gold/orange','yellow perch'];
- else if(has(forage,'craw')) start=['green pumpkin craw','brown/orange','black/red flake'];
- else start=['green pumpkin','white pearl','black/blue'];
+function run(){
+ let depth=document.getElementById("depth").value;
+ let clarity=document.getElementById("clarity").value;
+ let cover=document.getElementById("cover").value;
+ let forage=document.getElementById("forage").value;
+ let wind=document.getElementById("wind").value;
 
- if(has(clarity,'clear')||has(clarity,'ultra')) backup.push('translucent','matte natural','smaller profile');
- if(has(clarity,'stained')) backup.push('chartreuse accent','gold flash','darker back');
- if(has(clarity,'dirty')) backup.push('black/blue','chartreuse/white','solid silhouette');
- if(has(waterColor,'brown')) backup.push('black/gold or black/blue');
- if(has(waterColor,'tannic')) backup.push('black, junebug, gold, orange');
- if(has(wind,'moderate')||has(wind,'heavy')) notes.push('Wind/current: brighter, heavier, faster is allowed.');
- if(has(pressure,'high')) notes.push('Pressure: downsize, natural color, longer pauses.');
- return {start:[...new Set(start)],backup:[...new Set(backup)],notes};
-}
+ let lure1="Swimbait",lure2="Jig",lure3="Ned Rig";
 
-function details(tech,species,depth,clarity,wind,cover,mood){
- let heavy=has(wind,'heavy')||has(depth,'21')||has(depth,'35');
- let wt=heavy?' Go heavier to maintain feel/contact.':'';
- const m={
- 'Ned rig':['1/10–1/6 oz head; 2.5–3 inch bait.'+wt,'Drag-shake-pause; deadstick in tough conditions.','Cast to hard-bottom transition, rock seam, sparse grass edge, or last place bottom changes.','Depth/location first. If still no bites, downsize and go more natural.'],
- 'Drop shot':['1/8–3/8 oz weight; nose-hook open water, Texas nose-hook near cover.'+wt,'Hold above fish; shake slack line; long pauses.','Drop on marked fish, deep edge, rock break, suspended fish, or bait ball edge.','If fish look but won’t eat: smaller bait, lighter line, longer pause.'],
- 'Swimbait':['2.8–4.3 inch paddle tail; jighead matched to depth.'+wt,'Slow steady retrieve just above fish/cover.','Wind-blown bait, grass edge, point, flat, or open-water lane.','Change depth/speed first. If short strikes, downsize.'],
- 'Crankbait':['Choose diving depth that hits bottom/cover.','Deflect, pause after contact, vary cadence.','Cast across rock, riprap, shell, ledge, or wind-blown point so bait contacts something.','If not contacting cover/bottom, change crank depth.'],
- 'Spinnerbait':['3/8–1/2 oz; willow for flash, Colorado for thump.'+wt,'Slow-roll dirty/cold; burn/wake in wind/active fish.','Wind-blown cover, grass edge, laydown, or stained shallow lane.','If follows: change blade/trailer or switch finesse.'],
- 'Chatterbait / bladed jig':['3/8–1/2 oz; shad, bluegill, or black/blue.'+wt,'Rip free from grass, pause after contact.','Cast parallel to grass edge, through holes, or beside shallow cover.','If short strikes: change trailer action/size.'],
- 'Texas rig':['3/16–1/2 oz worm/creature/craw.'+wt,'Pitch, let fall, shake, hop, drag.','Hit the highest-percentage targets: shade, holes, isolated cover, thickest clean cover.','If no bites: downsize profile/weight or flip thicker cover.'],
- 'Jig':['3/8–1/2 oz; football on rock, flipping jig in cover.'+wt,'Drag/hop/swim depending cover.','Cast to shade, rock/wood contact points, dock corners, grass edges, or crawfish areas.','Change trailer action first, then weight, then color.'],
- 'Jerkbait':['Suspending jerkbait; natural in clear, louder in stain.','Twitch-twitch-pause; longer pauses cold/tough.','Cast over points, grass tops, bluff ends, suspended bait, or clear-water smallmouth zones.','Followers: pause longer or go more natural.'],
- 'Topwater':['Walking bait, popper, buzzbait, or frog.','Work low light, shade, grass, or schooling fish.','Throw to shade lines, surface bait, grass mats, calm pockets, and ambush edges.','Missed blowup: throw follow-up bait immediately.'],
- 'Jig and minnow':['1/8–3/8 oz jig + minnow/minnow plastic.'+wt,'Lift-fall, slow drag, or snap if active.','Fish breaklines, current seams, rock/sand transitions, and bait depth.','If marks ignore: slow down or use slip bobber/live bait.'],
- 'Blade bait':['1/4–5/8 oz blade bait.'+wt,'Short hops off bottom; do not over-rip cold fish.','Deep rock, flats, channel edges, wintering areas.','If negative: switch to jig/minnow or live bait.'],
- 'Slip bobber/live bait':['Slip bobber with minnow/leech/crawler; set just above fish.','Let wind/current move it naturally.','Edges, weedlines, rock transitions, pressured walleye.','Adjust depth in 1–2 ft increments.'],
- 'Trolling crankbait':['Crankbait/crawler harness matched to fish depth.','Troll just above fish; adjust speed before color.','Open-water bait, reefs, basins, contour edges.','No bites: change depth/speed first.'],
- 'Crappie jig':['1/32–1/8 oz jig.'+wt,'Slow swim, pendulum fall, vertical hover above fish.','Brush, dock shade, timber, stake bed, suspended school.','Followers: downsize and slow fall.'],
- 'Crappie minnow rig':['Small hook/jighead + minnow under bobber or tightline.','Hold above cover/fish; let minnow work.','Brush, timber, docks, stained water.','No bites: adjust depth first.'],
- 'Road Runner / underspin':['1/16–1/8 oz underspin.'+wt,'Slow steady above brush/grass/suspended fish.','Search edges of brush, shallow flats, wind-blown banks.','Nips: slow down or switch vertical jig.']
- };
- let x=m[tech]||m['Jig'];
- if(has(clarity,'dirty')) x[0]+=' Dirty water: favor vibration, scent/live bait, glow, chartreuse, or dark silhouette.';
- return {setup:x[0],retrieve:x[1],cast:x[2],firstChange:x[3]};
-}
+ if(forage=="Crawfish"){lure1="Jig";lure2="Crankbait";lure3="Ned Rig";}
+ if(forage=="Bluegill"){lure1="Swim Jig";lure2="Texas Rig";lure3="Topwater";}
 
-function priority(species,tech,depth,clarity,wind,mood,pressure){
- if(has(mood,'suspended')) return 'Fish position / depth';
- if(has(mood,'bottom')) return 'Bottom contact';
- if(has(pressure,'high')) return 'Speed + profile';
- if(has(clarity,'dirty')) return 'Visibility + vibration';
- if(species==='Crappie'||species==='Walleye') return 'Depth control';
- if(has(wind,'calm')&&has(clarity,'clear')) return 'Subtlety';
- return 'Location + depth';
-}
-function backup(tech,species){
- if(species==='Crappie') return tech==='Crappie jig'?'Crappie minnow rig':'Crappie jig';
- if(species==='Walleye') return tech==='Jig and minnow'?'Slip bobber/live bait':'Jig and minnow';
- return {'Ned rig':'Drop shot','Drop shot':'Ned rig or swimbait','Swimbait':'Drop shot follow-up','Crankbait':'Jig or Texas rig','Spinnerbait':'Swimbait or Texas rig','Chatterbait / bladed jig':'Texas rig or jig','Texas rig':'Jig','Jig':'Texas rig or Ned rig','Jerkbait':'Drop shot or swimbait','Topwater':'Texas rig follow-up'}[tech]||'Finesse follow-up';
-}
-function confidence(species,tech,forage,clarity,wind,pressure,mood){
- let s=72;
- if(forage!=='Auto / Unknown') s+=7;
- if(has(mood,'active')||has(mood,'schools')) s+=6;
- if(has(pressure,'high')&&['Ned rig','Drop shot','Crappie minnow rig','Slip bobber/live bait'].includes(tech)) s+=6;
- if(has(wind,'moderate')||has(wind,'heavy')) s+=4;
- if(has(clarity,'ultra')&&['Spinnerbait','Crankbait','Chatterbait / bladed jig'].includes(tech)) s-=6;
- if(species==='Smallmouth'&&['Ned rig','Drop shot','Swimbait','Jerkbait'].includes(tech)) s+=6;
- if(species==='Largemouth'&&['Jig','Texas rig','Spinnerbait','Crankbait','Chatterbait / bladed jig','Topwater'].includes(tech)) s+=6;
- if(species==='Walleye'&&['Jig and minnow','Slip bobber/live bait','Blade bait','Trolling crankbait'].includes(tech)) s+=6;
- if(species==='Crappie'&&['Crappie jig','Crappie minnow rig','Road Runner / underspin'].includes(tech)) s+=7;
- return Math.max(45,Math.min(96,s));
-}
-function confidenceWhy(sc,species,tech,forage,wind,pressure,mood,clarity){
- let r=[];
- if(forage!=='Auto / Unknown') r.push('forage identified');
- if(has(wind,'moderate')||has(wind,'heavy')) r.push('wind/current creates feeding lanes');
- if(has(pressure,'high')&&['Ned rig','Drop shot','Crappie minnow rig','Slip bobber/live bait'].includes(tech)) r.push('finesse fits pressure');
- if(has(mood,'active')||has(mood,'schools')) r.push('fish activity supports chosen lure');
- if(has(mood,'suspended')&&['Drop shot','Swimbait','Jerkbait','Trolling crankbait','Crappie jig'].includes(tech)) r.push('bait fits suspended fish');
- if(has(clarity,'dirty')) r.push('color plan adds visibility');
- if(r.length===0) r.push('general lake/type conditions match the lure family');
- return r.slice(0,3).join(' + ');
-}
-function runEngine(){
- try{
- let species=$('species'),lake=$('lake'),season=$('season'),clarity=$('clarity'),depth=$('depth'),cover=$('cover'),wind=$('wind'),mood=$('mood');
- let pressure=$('pressure'),baitSeen=$('baitSeen'),sky=$('sky'),preferred=$('preferred');
- let forage=inferredForage(lake,cover,species);
- let waterColor=$('waterColor')==='Auto / typical'?(has(clarity,'dirty')?'Brown mud / runoff':has(clarity,'stained')?'Green stain / algae':'Clear / blue'):$('waterColor');
- let tech=chooseTech(species,lake,season,clarity,depth,cover,wind,mood,forage,pressure,baitSeen,preferred,sky);
- let c=colorPlan(species,forage,clarity,waterColor,wind,pressure);
- let d=details(tech,species,depth,clarity,wind,cover,mood);
- let sc=confidence(species,tech,forage,clarity,wind,pressure,mood);
- let cls=sc>=80?'good':sc>=65?'warn':'bad';
- let pri=priority(species,tech,depth,clarity,wind,mood,pressure);
- let doNot=[];
- if(has(clarity,'ultra')&&has(wind,'calm')) doNot.push('Do not start loud/oversized/high-flash in calm ultra-clear water.');
- if(has(clarity,'dirty')) doNot.push('Do not use weak translucent colors in dirty water.');
- if(has(pressure,'high')) doNot.push('Do not rotate constantly; make repeated precise casts.');
- if(species==='Crappie') doNot.push('Do not fish below the school.');
- if(species==='Walleye') doNot.push('Do not ignore bait depth and low-light/wind windows.');
- lastPlan={timestamp:new Date().toLocaleString(),species,lake,season,clarity,depth,cover,wind,mood,pressure,baitSeen,sky,forage,waterColor,tech,color:c.start[0],setup:d.setup,cast:d.cast,retrieve:d.retrieve,priority:pri,confidence:sc,notes:(document.getElementById('notes')?document.getElementById('notes').value:''),gps:gpsTag};
- let html=`
- <h2>Elite Plan</h2>
- <div class="score ${cls}">${sc}%</div>
- <div class="small"><b>Why:</b> ${confidenceWhy(sc,species,tech,forage,wind,pressure,mood,clarity)}.</div>
- <div class="first">
-   <div class="sectiontitle">First Cast</div>
-   <div class="big">${tech}</div>
-   <div class="row"><div class="key">Color</div><div class="val">${c.start[0]}</div></div>
-   <div class="row"><div class="key">Setup</div><div class="val">${d.setup}</div></div>
-   <div class="row"><div class="key">Cast</div><div class="val">${d.cast}</div></div>
-   <div class="row"><div class="key">Retrieve</div><div class="val">${d.retrieve}</div></div>
-   <div class="row"><div class="key">Priority</div><div class="val">${pri}</div></div>
- </div>
- <div>${['Species: '+species,'Lake: '+lake,'Forage: '+forage,'Depth: '+depth,'Cover: '+cover].map(x=>`<span class="pill">${x}</span>`).join('')}</div>
- <div class="sectiontitle">Color System</div>
- <ul><li><b>Start:</b> ${c.start.join(' / ')}</li><li><b>Adjust:</b> ${c.backup.join(' / ')||'slightly lighter/darker version'}</li></ul>
- <div class="sectiontitle">If That Fails</div>
- <ul>
-   <li><b>No bites:</b> ${d.firstChange}</li>
-   <li><b>Followers:</b> downsize, go more natural, pause longer.</li>
-   <li><b>Short strikes:</b> smaller profile, slower speed, trailer/stinger hook.</li>
-   <li><b>One bite:</b> duplicate exact depth, cover, bottom, wind angle, and retrieve.</li>
- </ul>
- <div class="sectiontitle">Backup</div><ul><li><b>${backup(tech,species)}</b></li></ul>
- <div class="sectiontitle">Extra Dial-In</div><ul>${c.notes.map(n=>`<li>${n}</li>`).join('')}</ul>
- <div class="sectiontitle">Do Not Do This</div><ul>${doNot.map(a=>`<li>${a}</li>`).join('')}</ul>
- <div class="copybar"><button type="button" class="ghost" onclick="savePattern()">Save This Pattern</button><button type="button" class="ghost" onclick="copyPlan()">Copy Plan</button><button type="button" class="ghost" onclick="window.print()">Print / Save PDF</button><button type="button" class="ghost" onclick="showAdjustmentHelp()">What If It Failed?</button></div><div id="adjustHelp" class="hidden warnbox"></div>
- `;
- document.getElementById('output').classList.remove('hidden');
- document.getElementById('output').innerHTML=html;
- document.getElementById('output').scrollIntoView({behavior:'smooth'});
- }catch(err){showError(err);}
-}
-function copyPlan(){
- const out=document.getElementById('output').innerText;
- if(navigator.clipboard){navigator.clipboard.writeText(out);}
-}
+ let loc="Main point";
+ if(wind=="Windy") loc="Wind-blown "+cover;
+ if(depth=="Unknown") loc="Start 8–12 ft search";
 
-function getPatterns(){try{return JSON.parse(localStorage.getItem('fishingPatternsV7')||'[]')}catch(e){return []}}
-function setPatterns(arr){localStorage.setItem('fishingPatternsV7',JSON.stringify(arr))}
-function savePattern(){if(!lastPlan){showError('Run a plan first, then save it.');return} const result=prompt('Result? Example: caught fish, no bites, followers, short strikes, keeper pattern','caught fish'); if(result===null)return; const arr=getPatterns(); arr.unshift({...lastPlan,result}); setPatterns(arr.slice(0,75)); renderPatterns(); alert('Pattern saved on this device.')}
-function renderPatterns(){const box=document.getElementById('patternsBox'); const arr=getPatterns(); box.classList.remove('hidden'); if(!arr.length){box.innerHTML='<div class="small">No saved patterns yet.</div>';return} box.innerHTML=arr.map(p=>`<div style="border:1px solid #294456;border-radius:12px;padding:10px;margin:8px 0;background:#0b1823"><div class="big">${p.species} • ${p.lake}</div><div class="small">${p.timestamp}${p.gps?' • GPS: '+p.gps:''}</div><div>${['Result: '+(p.result||''),'Lure: '+p.tech,'Color: '+p.color,'Depth: '+p.depth,'Cover: '+p.cover,'Confidence: '+p.confidence+'%'].map(x=>`<span class="pill">${x}</span>`).join('')}</div><ul><li><b>Cast:</b> ${p.cast}</li><li><b>Retrieve:</b> ${p.retrieve}</li>${p.notes?`<li><b>Notes:</b> ${p.notes}</li>`:''}</ul></div>`).join('')}
-function clearPatterns(){if(confirm('Clear all saved patterns from this device?')){localStorage.removeItem('fishingPatternsV7');renderPatterns()}}
-function showAdjustmentHelp(){const box=document.getElementById('adjustHelp'); if(!box)return; box.classList.remove('hidden'); box.innerHTML='<b>Fast failure diagnosis:</b><ul><li><b>No bites:</b> change depth/location first. Do not blame color yet.</li><li><b>Followers:</b> downsize, go natural, pause longer, use finesse follow-up.</li><li><b>Short strikes:</b> smaller profile, slower speed, trailer/stinger hook.</li><li><b>One bite:</b> repeat exact depth, cover, wind angle, and retrieve.</li><li><b>Marked fish:</b> put bait above them, lighten line, slow down, and use minnow/live-bait profile.</li></ul>'}
-function tagGPS(){const status=document.getElementById('gpsStatus'); if(!navigator.geolocation){status.textContent='GPS is not supported in this browser.';return} status.textContent='Getting GPS...'; navigator.geolocation.getCurrentPosition(pos=>{gpsTag=pos.coords.latitude.toFixed(5)+', '+pos.coords.longitude.toFixed(5); status.textContent='GPS tagged: '+gpsTag},err=>{status.textContent='GPS failed or permission denied. You can still use the engine.'})}
-function startVoiceNote(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition; const notes=document.getElementById('notes'); if(!SR){alert('Voice notes are not supported in this browser. Type your note instead.');return} const rec=new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=1; rec.onresult=e=>{const text=e.results[0][0].transcript; notes.value=(notes.value?notes.value+' ':'')+text}; rec.onerror=()=>alert('Voice note failed. Try typing it.'); rec.start()}
+ let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
 
-function resetForm(){document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.getElementById('output').classList.add('hidden');document.getElementById('errorBox').classList.add('hidden');}
-function showError(err){
- const box=document.getElementById('errorBox');
- box.classList.remove('hidden');
- box.innerHTML='<div class="sectiontitle" style="color:#ffb4b4">Error</div><div class="small">'+String(err && err.message ? err.message : err)+'</div>';
+ let conf=confidenceScore();
+
+ let out=document.getElementById("out");
+ out.innerHTML=`
+<div class="out">WHERE: ${loc}</div>
+<div class="out">TOP 3:</div>
+<div class="small">1. ${lure1} – ${color}</div>
+<div class="small">2. ${lure2}</div>
+<div class="small">3. ${lure3}</div>
+<div class="small">CONFIDENCE: ${conf}%</div>
+`;
+ out.classList.remove("hidden");
 }
-document.addEventListener('DOMContentLoaded', function(){
- document.getElementById('getPlanBtn').addEventListener('click', function(e){e.preventDefault();runEngine();});
- document.getElementById('resetBtn').addEventListener('click', function(e){e.preventDefault();resetForm();});
- const vp=document.getElementById('viewPatternsBtn'); if(vp) vp.addEventListener('click',e=>{e.preventDefault();renderPatterns()});
- const cp=document.getElementById('clearPatternsBtn'); if(cp) cp.addEventListener('click',e=>{e.preventDefault();clearPatterns()});
- const gps=document.getElementById('gpsBtn'); if(gps) gps.addEventListener('click',e=>{e.preventDefault();tagGPS()});
- const voice=document.getElementById('voiceBtn'); if(voice) voice.addEventListener('click',e=>{e.preventDefault();startVoiceNote()});
-});
-window.addEventListener('error', function(e){showError(e.error || e.message);});
 </script>
-
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./service-worker.js').catch(function(err){console.log('Service worker registration failed:',err);});});}</script>
 
 </body>
 </html>
