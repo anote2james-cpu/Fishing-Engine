@@ -178,6 +178,7 @@ function toggle(){
 }
 
 function run(){
+
  let clarity=document.getElementById("clarity").value||"Stained";
  let depth=document.getElementById("depth").value||"Mid";
  let cover=document.getElementById("cover").value||"Structure";
@@ -195,9 +196,33 @@ function run(){
  if(pressure=="Falling") lures.unshift("Reaction Bait");
  if(temp=="Cold") lures=["Jerkbait","Ned Rig","Drop Shot"];
 
- let location="Main structure";
- if(wind && wind!="Calm") location="Wind-blown "+structure;
- if(depth=="Unknown") location="Search 8–12 ft";
+ let location = "";
+
+ if (wind && wind !== "Calm") {
+    if (structure === "Points") {
+        location = "Wind-blown main lake points";
+    } else if (structure === "Flats") {
+        location = "Wind-blown flats near drop-offs";
+    } else if (structure === "Weedlines") {
+        location = "Wind-blown outside grass edge (6–12 ft)";
+    } else {
+        location = "Wind-blown structure near deeper water";
+    }
+ } else {
+    if (depth === "Shallow") {
+        location = "Shallow flats near cover";
+    } else if (depth === "Mid") {
+        location = "Secondary points and first break lines";
+    } else if (depth === "Deep") {
+        location = "Deep structure near bait (ledges, drop-offs)";
+    } else {
+        location = "Start on points and transition areas (8–12 ft)";
+    }
+ }
+
+ if (forage === "Shad") location += " where bait is present";
+ if (forage === "Crawfish") location += " on rock transitions";
+ if (forage === "Bluegill") location += " near cover and grass edges";
 
  let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
 
