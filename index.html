@@ -2,8 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V12 Upgraded</title>
-<link rel="manifest" href="manifest.json">
+<title>Fishing Engine V12 Elite</title>
 <style>
 body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
 .card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
@@ -14,15 +13,17 @@ button{width:100%;padding:14px;margin-top:10px;border:none;border-radius:10px;fo
 select{width:100%;padding:10px;margin-top:6px;border-radius:8px;background:#08141e;color:#fff}
 .hidden{display:none}
 label{font-size:13px;color:#9fb3c8}
+.note{font-size:12px;color:#7dd3fc;margin-top:6px}
 </style>
 </head>
 <body>
 
 <div class="card">
-<h3>Fishing Engine</h3>
+<h3>Fishing Engine V12 Elite</h3>
 
 <label>Lake</label>
 <select id="lake" onchange="applyLake()">
+<option>Unknown Body of Water</option>
 <option>Laurel River Lake</option>
 <option>Lake Cumberland</option>
 <option>Wood Creek Lake</option>
@@ -37,57 +38,92 @@ label{font-size:13px;color:#9fb3c8}
 <option>Okeechobee</option>
 </select>
 
-<label>Water Clarity</label>
-<select id="clarity">
-<option value="">Select Water Clarity...</option>
-<option>Clear</option>
-<option>Stained</option>
-<option>Dirty</option>
-</select>
+<div id="profileNote" class="note"></div>
 
+<div id="depthGroup">
 <label>Depth</label>
 <select id="depth">
-<option value="">Select Depth...</option>
+<option value="">Auto</option>
 <option>Unknown</option>
 <option>Shallow</option>
 <option>Mid</option>
 <option>Deep</option>
 </select>
+</div>
 
-<label>Cover Type</label>
+<div id="coverGroup">
+<label>Cover</label>
 <select id="cover">
-<option value="">Select Cover...</option>
+<option value="">Auto</option>
 <option>Rock</option>
 <option>Grass</option>
 <option>Wood</option>
 <option>Open</option>
 </select>
+</div>
 
 <button onclick="toggle()">Dial It In</button>
 
 <div id="adv" class="hidden">
+
+<label>Water Clarity</label>
+<select id="clarity">
+<option value="">Select...</option>
+<option>Clear</option>
+<option>Stained</option>
+<option>Dirty</option>
+</select>
+
 <label>Forage</label>
 <select id="forage">
-<option value="">Auto (from lake)</option>
+<option value="">Auto</option>
 <option>Shad</option>
 <option>Bluegill</option>
 <option>Crawfish</option>
-</select>
-
-<label>Weather</label>
-<select id="weather">
-<option value="">Select Weather...</option>
-<option>Sunny</option>
-<option>Cloudy</option>
-<option>Post-Front</option>
+<option>Perch</option>
+<option>Goby</option>
+<option>Frog</option>
+<option>Mixed</option>
 </select>
 
 <label>Wind</label>
 <select id="wind">
-<option value="">Select Wind...</option>
+<option value="">Unknown</option>
 <option>Calm</option>
-<option>Windy</option>
+<option>Light</option>
+<option>Moderate</option>
+<option>Heavy</option>
 </select>
+
+<label>Water Temperature</label>
+<select id="temp">
+<option value="">Unknown</option>
+<option>Cold</option>
+<option>Cool</option>
+<option>Warm</option>
+<option>Hot</option>
+</select>
+
+<label>Barometric Pressure</label>
+<select id="pressure">
+<option value="">Unknown</option>
+<option>Rising</option>
+<option>Stable</option>
+<option>Falling</option>
+</select>
+
+<label>Structure</label>
+<select id="structure">
+<option value="">General</option>
+<option>Points</option>
+<option>Flats</option>
+<option>Drop-offs</option>
+<option>Weedlines</option>
+<option>Docks</option>
+<option>Timber</option>
+<option>Open Water</option>
+</select>
+
 </div>
 
 <button class="primary" onclick="run()">THROW THIS</button>
@@ -96,29 +132,44 @@ label{font-size:13px;color:#9fb3c8}
 <div id="out" class="card hidden"></div>
 
 <script>
+
 const lakeProfiles = {
- "Laurel River Lake":{forage:"Shad",cover:"Rock"},
- "Lake Cumberland":{forage:"Shad",cover:"Rock"},
- "Wood Creek Lake":{forage:"Bluegill",cover:"Wood"},
- "Kentucky Lake":{forage:"Shad",cover:"Grass"},
- "Chickamauga":{forage:"Shad",cover:"Grass"},
- "Dale Hollow":{forage:"Shad",cover:"Rock"},
- "Cherokee":{forage:"Shad",cover:"Rock"},
- "Norris":{forage:"Shad",cover:"Rock"},
- "St. Clair":{forage:"Perch",cover:"Grass"},
- "Erie":{forage:"Gobies",cover:"Rock"},
- "Guntersville":{forage:"Shad",cover:"Grass"},
- "Okeechobee":{forage:"Bluegill",cover:"Grass"}
+ "Laurel River Lake":{forage:"Shad",cover:"Rock",depth:"Mid"},
+ "Lake Cumberland":{forage:"Shad",cover:"Rock",depth:"Mid"},
+ "Wood Creek Lake":{forage:"Bluegill",cover:"Wood",depth:"Shallow"},
+ "Kentucky Lake":{forage:"Shad",cover:"Grass",depth:"Mid"},
+ "Chickamauga":{forage:"Shad",cover:"Grass",depth:"Shallow"},
+ "Dale Hollow":{forage:"Shad",cover:"Rock",depth:"Deep"},
+ "Cherokee":{forage:"Shad",cover:"Rock",depth:"Mid"},
+ "Norris":{forage:"Shad",cover:"Rock",depth:"Deep"},
+ "St. Clair":{forage:"Perch",cover:"Grass",depth:"Shallow"},
+ "Erie":{forage:"Gobies",cover:"Rock",depth:"Mid"},
+ "Guntersville":{forage:"Shad",cover:"Grass",depth:"Shallow"},
+ "Okeechobee":{forage:"Bluegill",cover:"Grass",depth:"Shallow"}
 };
 
-function applyLake(){
+function updateVisibility(){
  let lake = document.getElementById("lake").value;
- let profile = lakeProfiles[lake];
- if(!document.getElementById("forage").value){
-  document.getElementById("forage").value = profile.forage;
- }
- if(!document.getElementById("cover").value){
-  document.getElementById("cover").value = profile.cover;
+ let isUnknown = lake === "Unknown Body of Water";
+ document.getElementById("depthGroup").style.display = isUnknown ? "block" : "none";
+ document.getElementById("coverGroup").style.display = isUnknown ? "block" : "none";
+}
+
+function applyLake(){
+ let lake=document.getElementById("lake").value;
+ updateVisibility();
+
+ let note=document.getElementById("profileNote");
+
+ if(lake !== "Unknown Body of Water"){
+   let p=lakeProfiles[lake];
+   document.getElementById("forage").value=p.forage;
+   document.getElementById("cover").value=p.cover;
+   document.getElementById("depth").value=p.depth;
+
+   note.innerText = `Using ${lake} profile (${p.forage} • ${p.cover} • ${p.depth})`;
+ } else {
+   note.innerText = "";
  }
 }
 
@@ -126,45 +177,53 @@ function toggle(){
  document.getElementById("adv").classList.toggle("hidden");
 }
 
-function confidence(){
- let c=50;
- if(document.getElementById("forage").value) c+=15;
- if(document.getElementById("weather").value) c+=10;
- if(document.getElementById("wind").value) c+=10;
- if(document.getElementById("depth").value) c+=15;
- return c;
-}
-
 function run(){
- let depth=depthEl.value||"Unknown";
- let clarity=clarityEl.value||"Stained";
- let cover=coverEl.value||"Mixed";
- let forage=forageEl.value||"Shad";
- let wind=windEl.value;
+ let clarity=document.getElementById("clarity").value||"Stained";
+ let depth=document.getElementById("depth").value||"Mid";
+ let cover=document.getElementById("cover").value||"Structure";
+ let forage=document.getElementById("forage").value||"Shad";
+ let wind=document.getElementById("wind").value;
+ let pressure=document.getElementById("pressure").value;
+ let temp=document.getElementById("temp").value;
+ let structure=document.getElementById("structure").value||cover;
 
  let lures=["Swimbait","Jig","Ned Rig"];
 
  if(forage=="Crawfish") lures=["Jig","Crankbait","Ned Rig"];
  if(forage=="Bluegill") lures=["Swim Jig","Texas Rig","Topwater"];
 
- let loc="Main structure";
- if(wind=="Windy") loc="Wind-blown "+cover;
- if(depth=="Unknown") loc="Search 8–12 ft";
+ if(pressure=="Falling") lures.unshift("Reaction Bait");
+ if(temp=="Cold") lures=["Jerkbait","Ned Rig","Drop Shot"];
+
+ let location="Main structure";
+ if(wind && wind!="Calm") location="Wind-blown "+structure;
+ if(depth=="Unknown") location="Search 8–12 ft";
 
  let color=clarity=="Dirty"?"Black/Blue":clarity=="Clear"?"Natural":"White";
 
+ let confidence=50;
+ if(forage) confidence+=10;
+ if(wind && wind!=="Unknown") confidence+=10;
+ if(pressure && pressure!=="Unknown") confidence+=10;
+ if(temp && temp!=="Unknown") confidence+=10;
+ if(structure && structure!=="General") confidence+=10;
+ if(depth && depth!=="Unknown") confidence+=10;
+ confidence=Math.min(confidence,100);
+
  let out=document.getElementById("out");
  out.innerHTML=`
-<div class="out">WHERE: ${loc}</div>
+<div class="out">WHERE: ${location}</div>
 <div class="out">TOP 3:</div>
 <div class="small">1. ${lures[0]} – ${color}</div>
 <div class="small">2. ${lures[1]}</div>
 <div class="small">3. ${lures[2]}</div>
-<div class="small">CONFIDENCE: ${confidence()}%</div>
+<div class="small">CONFIDENCE: ${confidence}%</div>
 `;
  out.classList.remove("hidden");
 }
-</script>
 
+applyLake();
+
+</script>
 </body>
 </html>
