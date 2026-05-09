@@ -176,6 +176,10 @@ function applyLake(){
  let lake=document.getElementById("lake").value;
  if(lake!=="Unknown Body of Water"){
    document.getElementById("forage").value=lakeForage[lake] || "Shad";
+   
+   // Auto clarity defaults by lake
+if (lake === "Lake Erie") document.getElementById("clarity").value = "Stained";
+if (lake === "Lake St. Clair") document.getElementById("clarity").value = "Clear";
  }
 }
 
@@ -315,6 +319,8 @@ function run(){
 lures = pairLureDepth(lures, depthZone, species);
  let confidence = 50;
 
+ let pressure = document.getElementById("pressure").value;
+let cloud = document.getElementById("cloud").value; 
 // INPUT COMPLETENESS
 if (species && species !== "Unknown") confidence += 10;
 if (temp) confidence += 10;
@@ -333,7 +339,12 @@ if (season === "Pre-Spawn" || season === "Fall") confidence += 5;
 // PENALTIES
 if (pressure === "Rising") confidence -= 5;
 if (wind === "Calm") confidence -= 3;
-
+  
+// STRUCTURE + SPECIES MISMATCH PENALTIES
+if (species === "Smallmouth" && structure === "Weedlines") confidence -= 8;
+if (species === "Walleye" && structure === "Flats") confidence -= 8;
+if (species === "Crappie" && structure === "Open Water") confidence -= 6;
+  
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 
@@ -346,13 +357,13 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="out">TOP 3:</div>
 
 <div class="small">1. ${lures[0]}</div>
-<img src="${getImage(lures[0])}">
+<img src="${getImage(lures[0].split('(')[0])}">
 
 <div class="small">2. ${lures[1]}</div>
-<img src="${getImage(lures[1])}">
+<img src="${getImage(lures[0].split('(')[0])}">
 
 <div class="small">3. ${lures[2]}</div>
-<img src="${getImage(lures[2])}">
+<img src="${getImage(lures[0].split('(')[0])}">
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
