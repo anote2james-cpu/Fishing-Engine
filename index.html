@@ -182,8 +182,7 @@ if(Array.isArray(forageList)){
   document.getElementById("forage").value = forageList[0];
 }
  if(lake!=="Unknown Body of Water"){
-  if(Array.isArray(forageList)){
-  document.getElementById("forage").value = forageList[0];
+  
 }
    
    // Auto clarity defaults by lake
@@ -409,7 +408,7 @@ function run(){
  let forage=document.getElementById("forage").value;
 
  let season=getSeason(temp);
- let colors = matchColorsToLure(lures[0], clarity);
+ 
  let retrieve=getRetrieve(season,species);
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
@@ -426,6 +425,14 @@ let lures=getLures(species);
 
 lures = adjustLuresForStructure(lures, structure);
 lures = pairLureDepth(lures, depthZone, species);
+ let colors = [
+  ...matchColorsToLure(lures[0], clarity),
+  ...matchColorsToLure(lures[1], clarity),
+  ...matchColorsToLure(lures[2], clarity)
+];
+
+// remove duplicates
+colors = [...new Set(colors)];
  let confidence = 50;
 
  let pressure = document.getElementById("pressure").value;
