@@ -114,7 +114,49 @@ label{font-size:13px;color:#9fb3c8}
 <div id="out" class="card"></div>
 
 <script>
+function getDepthZone(species, season, structure){
 
+  // OPEN WATER
+  if (structure === "Open Water") {
+    if (season === "Summer") return "15–30 ft suspended";
+    if (season === "Winter") return "20–40 ft suspended";
+    return "8–20 ft suspended";
+  }
+
+  // SMALLMOUTH
+  if (species === "Smallmouth") {
+    if (season === "Winter") return "20–40 ft";
+    if (season === "Pre-Spawn") return "10–20 ft";
+    if (season === "Spawn") return "3–10 ft";
+    if (season === "Post-Spawn") return "10–20 ft";
+    return "15–30 ft";
+  }
+
+  // WALLEYE
+  if (species === "Walleye") {
+    if (season === "Winter") return "25–50 ft";
+    if (season === "Pre-Spawn") return "10–20 ft";
+    if (season === "Spawn") return "5–15 ft";
+    if (season === "Post-Spawn") return "15–30 ft";
+    return "20–40 ft";
+  }
+
+  // CRAPPIE
+  if (species === "Crappie") {
+    if (season === "Winter") return "15–25 ft";
+    if (season === "Pre-Spawn") return "6–12 ft";
+    if (season === "Spawn") return "2–6 ft";
+    if (season === "Post-Spawn") return "8–15 ft";
+    return "10–20 ft";
+  }
+
+  // LARGEMOUTH (default)
+  if (season === "Winter") return "15–30 ft";
+  if (season === "Pre-Spawn") return "8–15 ft";
+  if (season === "Spawn") return "2–6 ft";
+  if (season === "Post-Spawn") return "8–15 ft";
+  return "10–25 ft";
+}
 const lakeForage = {
  "Laurel River Lake":"Shad",
  "Lake Cumberland":"Shad",
@@ -213,6 +255,7 @@ function run(){
  let colors=getColors(clarity);
  let retrieve=getRetrieve(season,species);
  let location=getLocation(species,season,structure,wind,forage);
+ let depthZone = getDepthZone(species, season, structure);
  let lures=getLures(species);
 
  let confidence=70;
@@ -221,6 +264,7 @@ function run(){
 <div class="out">TARGET: ${species}</div>
 <div class="out">SEASON: ${season}</div>
 <div class="out">WHERE: ${location}</div>
+<div class="small">DEPTH: ${depthZone}</div>
 
 <div class="out">TOP 3:</div>
 
