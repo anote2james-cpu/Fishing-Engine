@@ -155,8 +155,9 @@ function getDepthZone(species, season, structure){
   if (season === "Pre-Spawn") return "8–15 ft";
   if (season === "Spawn") return "2–6 ft";
   if (season === "Post-Spawn") return "8–15 ft";
+   if (season === "Fall") return "5–15 ft";
   return "10–25 ft";
- if (season === "Fall") return "5–15 ft";
+ 
 }
 const lakeForage = {
  "Laurel River Lake":"Shad",
@@ -384,7 +385,7 @@ confidence = Math.max(40, Math.min(95, confidence));
 
 <div class="out">TOP 3:</div>
 
-<div class="out">TOP 3:</div>
+
 
 <div class="small">1. ${lures[0]}</div>
 <img src="${getImage(lures[0].split('(')[0])}">
