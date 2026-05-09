@@ -178,17 +178,13 @@ function applyLake(){
  let lake = document.getElementById("lake").value;
  let forageList = lakeForage[lake];
 
-if(Array.isArray(forageList)){
+ if(Array.isArray(forageList)){
   document.getElementById("forage").value = forageList[0];
-}
- if(lake!=="Unknown Body of Water"){
-  
-}
-   
-   // Auto clarity defaults by lake
-if (lake === "Lake Erie") document.getElementById("clarity").value = "Stained";
-if (lake === "Lake St. Clair") document.getElementById("clarity").value = "Clear";
  }
+
+ // Auto clarity defaults
+ if (lake === "Lake Erie") document.getElementById("clarity").value = "Stained";
+ if (lake === "Lake St. Clair") document.getElementById("clarity").value = "Clear";
 }
 
 function getSeason(t){
@@ -418,7 +414,7 @@ if(structure==="Weedlines" && season!=="Winter"){
 }
 
 if(structure==="Open Water"){
- depthZone = "suspended over deeper water";
+ depthZone = "10–30 ft (suspended over deeper water)";
 }
 
 let lures=getLures(species);
@@ -475,13 +471,13 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="small">FISH MOOD: ${getMood(pressure,cloud)}</div>
 
 <div class="small">1. ${lures[0]}</div>
-<img src="${getImage(lures[0].split('(')[0])}">
+<img src="${getImage(lures[0].split(' (')[0])}">
 
 <div class="small">2. ${lures[1]}</div>
-<img src="${getImage(lures[1].split('(')[0])}">
+<img src="${getImage(lures[1].split(' (')[0])}">
 
 <div class="small">3. ${lures[2]}</div>
-<img src="${getImage(lures[2].split('(')[0])}">
+<img src="${getImage(lures[2].split(' (')[0])}">
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
