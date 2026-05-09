@@ -216,7 +216,11 @@ function getLocation(species,season,structure,wind,forage){
  let loc="";
 
  if(structure==="Open Water"){
-   loc="Suspended fish chasing bait in open water";
+   if(species==="Smallmouth") loc="Suspended smallmouth chasing bait";
+   else if(species==="Walleye") loc="Suspended walleye in deeper water";
+   else if(species==="Crappie") loc="Suspended crappie near bait schools";
+   else loc="Suspended fish chasing bait in open water";
+
  } else if(species==="Smallmouth"){
    loc="Rocky points and drop-offs";
  } else if(species==="Walleye"){
@@ -253,21 +257,20 @@ function getImage(lure){
   // EXACT MATCHES FIRST (most important)
 
   if (clean.includes("football jig")) return "images/football-jig.jpg";
-  if (clean.includes("swim jig")) return "https://i.imgur.com/Zc7b6hN.jpg";
-  if (clean.includes("flipping jig")) return "https://i.imgur.com/VlX7h3b.jpg";
+ if (clean.includes("swim jig")) return "images/swim-jig.jpg";
+if (clean.includes("flipping jig")) return "images/flipping-jig.jpg";
 
-  if (clean.includes("ned rig")) return "https://i.imgur.com/0XKzn6m.jpg";
-  if (clean.includes("tube")) return "https://i.imgur.com/3zQ6X1F.jpg";
+if (clean.includes("ned rig")) return "images/ned-rig.jpg";
+if (clean.includes("tube")) return "images/tube.jpg";
 
-  if (clean.includes("jerkbait")) return "https://i.imgur.com/VX3z5pL.jpg";
-  if (clean.includes("crankbait")) return "https://i.imgur.com/k0W3d9A.jpg";
+if (clean.includes("jerkbait")) return "images/jerkbait.jpg";
+if (clean.includes("crankbait")) return "images/crankbait.jpg";
 
-  if (clean.includes("texas rig")) return "https://i.imgur.com/qkL8F1E.jpg";
+if (clean.includes("texas rig")) return "images/texas-rig.jpg";
 
-  if (clean.includes("paddle tail swimbait")) return "https://i.imgur.com/Jy8Yp6P.jpg";
-  if (clean.includes("swimbait")) return "https://i.imgur.com/Jy8Yp6P.jpg";
+if (clean.includes("swimbait")) return "images/swimbait.jpg";
 
-  if (clean.includes("minnow")) return "https://i.imgur.com/1Q7Z6vR.jpg";
+if (clean.includes("minnow")) return "images/minnow.jpg";
 
   // FALLBACKS
 
