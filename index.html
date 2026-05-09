@@ -82,6 +82,9 @@ label{font-size:13px;color:#9fb3c8}
 <option>Crawfish</option>
 <option>Perch</option>
 <option>Goby</option>
+<option>Alewife</option>
+<option>Herring</option>
+<option>Shiners</option>
 <option>Mixed</option>
 </select>
 
@@ -191,9 +194,9 @@ function getSeason(t){
 
  if(t <= 40) return "Winter";
 
- if(t <= 50) return "Pre-Spawn";
+ if(t <= 55) return "Pre-Spawn";
 
- if(t <= 65) return "Spawn";
+ if(t <= 68) return "Spawn";
 
  if(t <= 75) return "Post-Spawn";
 
@@ -301,9 +304,35 @@ return [
  "Topwater",
  "Carolina Rig"];
 }
-function matchColorsToLure(lure, clarity){
+function matchColorsToLure(lure, clarity, forage){
 
  let baseColors = getColors(clarity);
+
+ if(forage === "Goby"){
+   return ["Green Pumpkin", "Goby", "Brown", "Smoke Purple", "Watermelon"];
+ }
+
+ if(forage === "Perch"){
+   return ["Natural Perch", "Green Pumpkin Orange", "Gold", "Fire Tiger"];
+ }
+
+ if(forage === "Crawfish"){
+   return ["Green Pumpkin", "Brown Orange", "Black/Blue", "Craw"];
+ }
+
+ if(forage === "Bluegill"){
+   return ["Green Pumpkin", "Watermelon Red", "Bluegill", "Junebug"];
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   if(lure.includes("Swimbait")) return ["White", "Pearl", "Shad", "Silver"];
+   if(lure.includes("Jerkbait")) return ["Ghost Shad", "Pro Blue", "Silver", "Pearl"];
+   return ["White", "Sexy Shad", "Chrome", "Pearl"];
+ }
+
+ if(forage === "Shiners"){
+   return ["Gold", "Silver", "Pearl", "Natural Minnow"];
+ }
 
  if(lure.includes("Jig")) return baseColors;
  if(lure.includes("Swimbait")) return ["White","Shad","Silver"];
@@ -394,7 +423,24 @@ function pairLureDepth(lures, depthZone, species){
 
   });
 }
-  
+ function getRetrieveByLure(lure, season, species){
+
+ let clean = lure.toLowerCase();
+
+ if(clean.includes("jerkbait")) return "Snap-pause, then let it suspend";
+ if(clean.includes("ned")) return "Slow drag with small hops";
+ if(clean.includes("tube")) return "Drag, hop, and pause on bottom";
+ if(clean.includes("football jig")) return "Slow drag across rock or hard bottom";
+ if(clean.includes("flipping jig")) return "Pitch tight to cover and let it fall vertically";
+ if(clean.includes("swim jig")) return "Steady swim with light twitches";
+ if(clean.includes("texas")) return "Slow crawl, shake, and pause";
+ if(clean.includes("crankbait")) return "Deflect off cover with stop-and-go retrieve";
+ if(clean.includes("swimbait")) return "Steady retrieve through the strike zone";
+ if(clean.includes("topwater")) return "Pause between twitches or walking cadence";
+ if(clean.includes("minnow")) return "Slow hover or lift-drop presentation";
+
+ return getRetrieve(season, species);
+} 
 function run(){
  let species=document.getElementById("species").value;
  let temp=parseFloat(document.getElementById("temp").value)||60;
@@ -402,7 +448,7 @@ function run(){
  let wind=document.getElementById("wind").value;
  let structure=document.getElementById("structure").value;
  let forage=document.getElementById("forage").value;
-
+let time=document.getElementById("time").value;
  let season=getSeason(temp);
  
  let retrieve=getRetrieve(season,species);
@@ -413,33 +459,36 @@ if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
 }
 
-if(structure==="Open Water"){
- depthZone = "10–30 ft (suspended over deeper water)";
-}
+
 
 let lures=getLures(species);
 
 lures = adjustLuresForStructure(lures, structure);
 lures = pairLureDepth(lures, depthZone, species);
- let colors = [
-  ...matchColorsToLure(lures[0], clarity),
-  ...matchColorsToLure(lures[1], clarity),
-  ...matchColorsToLure(lures[2], clarity)
+  let retrieve = getRetrieveByLure(lures[0], season, species);
+let colors = [
+  ...matchColorsToLure(lures[0], clarity, forage),
+  ...matchColorsToLure(lures[1], clarity, forage),
+  ...matchColorsToLure(lures[2], clarity, forage)
 ];
 
 // remove duplicates
 colors = [...new Set(colors)];
- let confidence = 50;
+ let confidence = 45;
 
  let pressure = document.getElementById("pressure").value;
 let cloud = document.getElementById("cloud").value; 
 // INPUT COMPLETENESS
 if (species && species !== "Unknown") confidence += 10;
 if (temp) confidence += 10;
-if (clarity) confidence += 5;
+
 if (wind && wind !== "Calm") confidence += 5;
-if (structure) confidence += 5;
-if (forage) confidence += 5;
+if(forage === "Goby" && species === "Smallmouth") confidence += 8;
+if(forage === "Crawfish" && (structure === "Points" || structure === "Drop-offs")) confidence += 6;
+if(forage === "Shad" && (structure === "Open Water" || structure === "Flats")) confidence += 6;
+if(structure === "Weedlines" && species === "Largemouth") confidence += 6;
+if(structure === "Docks" && species === "Largemouth") confidence += 5;
+if(structure === "Open Water" && species === "Smallmouth") confidence += 5;
 
 // CONDITION QUALITY
 if (pressure === "Falling") confidence += 5;
