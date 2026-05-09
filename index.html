@@ -276,7 +276,29 @@ function run(){
  let depthZone = getDepthZone(species, season, structure);
  let lures=getLures(species);
 lures = pairLureDepth(lures, depthZone, species);
- let confidence=70;
+ let confidence = 50;
+
+// INPUT COMPLETENESS
+if (species && species !== "Unknown") confidence += 10;
+if (temp) confidence += 10;
+if (clarity) confidence += 5;
+if (wind && wind !== "Calm") confidence += 5;
+if (structure) confidence += 5;
+if (forage) confidence += 5;
+
+// CONDITION QUALITY
+if (pressure === "Falling") confidence += 5;
+if (cloud === "Overcast" || cloud === "Rainy") confidence += 5;
+
+// SEASON ALIGNMENT BONUS
+if (season === "Pre-Spawn" || season === "Fall") confidence += 5;
+
+// PENALTIES
+if (pressure === "Rising") confidence -= 5;
+if (wind === "Calm") confidence -= 3;
+
+// CLAMP RANGE
+confidence = Math.max(40, Math.min(95, confidence));
 
  document.getElementById("out").innerHTML=`
 <div class="out">TARGET: ${species}</div>
