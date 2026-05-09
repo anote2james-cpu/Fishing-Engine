@@ -261,6 +261,42 @@ function pairLureDepth(lures, depthZone, species){
 
   });
 }
+  function adjustLuresForStructure(lures, structure) {
+
+  return lures.map(lure => {
+
+    // GRASS / WEEDLINES
+    if (structure === "Weedlines") {
+      if (lure.includes("Jig")) return "Swim Jig";
+      if (lure.includes("Texas")) return "Texas Rig (weedless)";
+      if (lure.includes("Swimbait")) return "Weedless Swimbait";
+    }
+
+    // ROCK / POINTS / DROP-OFFS
+    if (structure === "Points" || structure === "Drop-offs") {
+      if (lure.includes("Jig")) return "Football Jig";
+      if (lure.includes("Tube")) return "Tube (rock drag)";
+      if (lure.includes("Ned")) return "Ned Rig (bottom contact)";
+    }
+
+    // WOOD / DOCKS / TIMBER
+    if (structure === "Docks" || structure === "Timber") {
+      if (lure.includes("Jig")) return "Flipping Jig";
+      if (lure.includes("Texas")) return "Texas Rig (pitching)";
+    }
+
+    // OPEN WATER
+    if (structure === "Open Water") {
+      if (lure.includes("Swimbait")) return "Paddle Tail Swimbait";
+      if (lure.includes("Jerkbait")) return "Suspending Jerkbait";
+      if (lure.includes("Minnow")) return "Live Minnow / Hover Rig";
+    }
+
+    return lure;
+
+  });
+}
+  
 function run(){
  let species=document.getElementById("species").value;
  let temp=parseFloat(document.getElementById("temp").value)||60;
@@ -275,6 +311,7 @@ function run(){
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
  let lures=getLures(species);
+  lures = adjustLuresForStructure(lures, structure);
 lures = pairLureDepth(lures, depthZone, species);
  let confidence = 50;
 
