@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V14 Elite</title>
+<title>Fishing Engine V13 Elite FINAL</title>
 <style>
 body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
 .card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
@@ -18,7 +18,7 @@ label{font-size:13px;color:#9fb3c8}
 <body>
 
 <div class="card">
-<h3>Fishing Engine V14 Elite</h3>
+<h3>Fishing Engine V13 Elite</h3>
 
 <label>Target Species</label>
 <select id="species">
@@ -103,11 +103,7 @@ function getColors(c){
  return ["Black/Blue","Junebug","Black/Chartreuse"];
 }
 
-function getRetrieve(season, species){
- if(species==="Smallmouth") return "Drag / hop along bottom";
- if(species==="Walleye") return "Slow lift-drop near bottom";
- if(species==="Crappie") return "Slow steady retrieve";
-
+function getRetrieve(season){
  if(season==="Winter") return "Slow drag / dead stick";
  if(season==="Pre-Spawn") return "Slow roll + pauses";
  if(season==="Spawn") return "Bed fishing slow";
@@ -116,8 +112,8 @@ function getRetrieve(season, species){
 }
 
 function getImage(lure){
- if(lure.includes("Swimbait")) return "https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg";
- if(lure.includes("Jig")) return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg";
+ if(lure==="Swimbait") return "https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg";
+ if(lure==="Jig") return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg";
  return "https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg";
 }
 
@@ -132,42 +128,31 @@ function run(){
 
  let season=getSeason(temp);
  let colors=getColors(clarity);
- let retrieve=getRetrieve(season, species);
+ let retrieve=getRetrieve(season);
 
  let location="";
 
- if(species==="Smallmouth"){
-   location="Rocky points and drop-offs";
-}
-else if(species==="Walleye"){
-   location="Deep structure near bottom transitions";
-}
-else if(species==="Crappie"){
-   location="Brush piles, docks, and shallow cover";
-}
-else{
-   if(season==="Pre-Spawn") location="Secondary points leading to spawning flats";
-   else if(season==="Spawn") location="Shallow bedding areas";
-   else if(season==="Post-Spawn") location="First drop-offs outside flats";
-   else if(season==="Summer") location="Offshore structure / grass edges";
-   else location="Deep structure";
-}
+ if(season==="Pre-Spawn") location="Secondary points leading to spawning flats";
+ else if(season==="Spawn") location="Shallow bedding areas";
+ else if(season==="Post-Spawn") location="First drop-offs outside flats";
+ else if(season==="Summer") location="Offshore structure / grass edges";
+ else location="Deep structure";
 
-if(wind!=="Calm") location="Wind-blown " + location;
+ if(wind!=="Calm") location="Wind-blown " + location;
 
-if(forage==="Crawfish") location+=" on rock transitions";
-if(forage==="Shad") location+=" near baitfish";
+ if(forage==="Crawfish") location+=" on rock transitions";
+ if(forage==="Shad") location+=" near baitfish";
 
-let lures=["Swimbait","Jig","Soft Plastic"];
+ let lures=["Swimbait","Jig","Soft Plastic"];
 
-if(species==="Smallmouth") lures=["Ned Rig","Tube","Jerkbait"];
-if(species==="Walleye") lures=["Jig","Crankbait","Minnow Rig"];
-if(species==="Crappie") lures=["Jig","Minnow","Small Swimbait"];
+ if(species==="Smallmouth") lures=["Ned Rig","Tube","Jerkbait"];
+ if(species==="Walleye") lures=["Jig","Crankbait","Minnow Rig"];
+ if(species==="Crappie") lures=["Jig","Minnow","Small Swimbait"];
 
-let confidence=70;
+ let confidence=70;
 
-let out=document.getElementById("out");
-out.innerHTML=`
+ let out=document.getElementById("out");
+ out.innerHTML=`
 <div class="out">TARGET: ${species}</div>
 <div class="out">SEASON: ${season}</div>
 <div class="out">WHERE: ${location}</div>
@@ -175,13 +160,13 @@ out.innerHTML=`
 <div class="out">TOP 3:</div>
 
 <div class="small">1. ${lures[0]}</div>
-<img src="${getImage(lures[0])}">
+<img src="${getImage("Swimbait")}">
 
 <div class="small">2. ${lures[1]}</div>
-<img src="${getImage(lures[1])}">
+<img src="${getImage("Jig")}">
 
 <div class="small">3. ${lures[2]}</div>
-<img src="${getImage(lures[2])}">
+<img src="${getImage("Soft Plastic")}">
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
