@@ -242,7 +242,25 @@ function getImage(lure){
  if(lure.toLowerCase().includes("jig")) return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg";
  return "https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg";
 }
+function pairLureDepth(lures, depthZone, species){
 
+  return lures.map(lure => {
+
+    if (lure.includes("Ned")) return `${lure} (bottom contact, ${depthZone})`;
+    if (lure.includes("Tube")) return `${lure} (drag/hop, ${depthZone})`;
+    if (lure.includes("Jerkbait")) return `${lure} (suspend over ${depthZone})`;
+
+    if (lure.includes("Swimbait")) return `${lure} (count down to ${depthZone})`;
+    if (lure.includes("Jig")) return `${lure} (bottom in ${depthZone})`;
+    if (lure.includes("Texas")) return `${lure} (slow crawl ${depthZone})`;
+
+    if (lure.includes("Crank")) return `${lure} (deflect through ${depthZone})`;
+    if (lure.includes("Minnow")) return `${lure} (hover in ${depthZone})`;
+
+    return `${lure} (${depthZone})`;
+
+  });
+}
 function run(){
  let species=document.getElementById("species").value;
  let temp=parseFloat(document.getElementById("temp").value)||60;
@@ -257,7 +275,7 @@ function run(){
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
  let lures=getLures(species);
-
+lures = pairLureDepth(lures, depthZone, species);
  let confidence=70;
 
  document.getElementById("out").innerHTML=`
