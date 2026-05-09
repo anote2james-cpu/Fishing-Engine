@@ -451,7 +451,7 @@ function run(){
 let time=document.getElementById("time").value;
  let season=getSeason(temp);
  
- let retrieve=getRetrieve(season,species);
+
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
 
@@ -462,8 +462,13 @@ if(structure==="Weedlines" && season!=="Winter"){
 
 
 let lures=getLures(species);
-
+if(time === "Morning" || time === "Evening"){
+  if(species === "Largemouth" && season !== "Winter"){
+    lures.unshift("Topwater");
+  }
+}
 lures = adjustLuresForStructure(lures, structure);
+lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
   let retrieve = getRetrieveByLure(lures[0], season, species);
 let colors = [
