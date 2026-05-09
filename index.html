@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fishing Engine V13 Elite FINAL</title>
+<title>Fishing Engine V13 Elite FULL</title>
 <style>
 body{font-family:Arial;background:#061018;color:#fff;margin:0;padding:12px}
 .card{background:#0f1c27;border-radius:14px;padding:14px;margin-bottom:12px}
@@ -19,15 +19,6 @@ label{font-size:13px;color:#9fb3c8}
 
 <div class="card">
 <h3>Fishing Engine V13 Elite</h3>
-
-<label>Target Species</label>
-<select id="species">
-<option>Largemouth</option>
-<option>Smallmouth</option>
-<option>Walleye</option>
-<option>Crappie</option>
-<option>Unknown</option>
-</select>
 
 <label>Lake</label>
 <select id="lake">
@@ -82,6 +73,29 @@ label{font-size:13px;color:#9fb3c8}
 <option>Goby</option>
 </select>
 
+<label>Cloud Cover</label>
+<select id="cloud">
+<option>Sunny</option>
+<option>Partly Cloudy</option>
+<option>Overcast</option>
+<option>Rainy</option>
+</select>
+
+<label>Time of Day</label>
+<select id="time">
+<option>Morning</option>
+<option>Midday</option>
+<option>Evening</option>
+<option>Night</option>
+</select>
+
+<label>Pressure</label>
+<select id="pressure">
+<option>Rising</option>
+<option>Stable</option>
+<option>Falling</option>
+</select>
+
 <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 
@@ -119,7 +133,6 @@ function getImage(lure){
 
 function run(){
 
- let species=document.getElementById("species").value;
  let temp=parseFloat(document.getElementById("temp").value)||60;
  let clarity=document.getElementById("clarity").value;
  let wind=document.getElementById("wind").value;
@@ -145,30 +158,29 @@ function run(){
 
  let lures=["Swimbait","Jig","Soft Plastic"];
 
- if(species==="Smallmouth") lures=["Ned Rig","Tube","Jerkbait"];
- if(species==="Walleye") lures=["Jig","Crankbait","Minnow Rig"];
- if(species==="Crappie") lures=["Jig","Minnow","Small Swimbait"];
-
- let confidence=70;
+ let confidence=60;
+ if(temp) confidence+=10;
+ if(wind) confidence+=10;
+ if(clarity) confidence+=10;
+ confidence=Math.min(confidence,100);
 
  let out=document.getElementById("out");
  out.innerHTML=`
-<div class="out">TARGET: ${species}</div>
 <div class="out">SEASON: ${season}</div>
 <div class="out">WHERE: ${location}</div>
 
 <div class="out">TOP 3:</div>
 
 <div class="small">1. ${lures[0]}</div>
-<img src="${getImage("Swimbait")}">
+<img src="${getImage(lures[0])}">
+<div class="small">Colors: ${colors.join(" • ")}</div>
 
 <div class="small">2. ${lures[1]}</div>
-<img src="${getImage("Jig")}">
+<img src="${getImage(lures[1])}">
 
 <div class="small">3. ${lures[2]}</div>
-<img src="${getImage("Soft Plastic")}">
+<img src="${getImage(lures[2])}">
 
-<div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
 <div class="small">CONFIDENCE: ${confidence}%</div>
 `;
