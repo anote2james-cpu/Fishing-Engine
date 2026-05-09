@@ -307,7 +307,7 @@ return [
 function matchColorsToLure(lure, clarity, forage){
 
  let baseColors = getColors(clarity);
-
+if(lure.includes("Topwater")) return ["Black","Bone","White"];
  if(forage === "Goby"){
    return ["Green Pumpkin", "Goby", "Brown", "Smoke Purple", "Watermelon"];
  }
@@ -337,7 +337,7 @@ function matchColorsToLure(lure, clarity, forage){
  if(lure.includes("Jig")) return baseColors;
  if(lure.includes("Swimbait")) return ["White","Shad","Silver"];
  if(lure.includes("Crankbait")) return ["Chartreuse","Sexy Shad","Fire Tiger"];
- if(lure.includes("Topwater")) return ["Black","Bone","White"];
+ 
 
  return baseColors;
 }
@@ -357,7 +357,7 @@ if (clean.includes("tube")) return "images/tube.jpg";
 
 if (clean.includes("jerkbait")) return "images/jerkbait.jpg";
 if (clean.includes("crankbait")) return "images/crankbait.jpg";
-
+if (clean.includes("topwater")) return "images/topwater.jpg";
 if (clean.includes("texas rig")) return "images/texas-rig.jpg";
 if (clean.includes("paddle tail swimbait")) return "images/swimbait.jpg";
 if (clean.includes("swimbait")) return "images/swimbait.jpg";
@@ -376,7 +376,7 @@ function pairLureDepth(lures, depthZone, species){
     if (lure.includes("Ned")) return `${lure} (bottom contact, ${depthZone})`;
     if (lure.includes("Tube")) return `${lure} (drag/hop, ${depthZone})`;
     if (lure.includes("Jerkbait")) return `${lure} (suspend over ${depthZone})`;
-
+if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible bait activity)`;
     if (lure.includes("Swimbait")) return `${lure} (count down to ${depthZone})`;
     if (lure.includes("Jig")) return `${lure} (bottom in ${depthZone})`;
     if (lure.includes("Texas")) return `${lure} (slow crawl ${depthZone})`;
