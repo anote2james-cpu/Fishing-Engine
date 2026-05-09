@@ -242,9 +242,33 @@ function getLures(species){
 }
 
 function getImage(lure){
- if(lure.toLowerCase().includes("swimbait")) return "https://upload.wikimedia.org/wikipedia/commons/3/3e/Fishing_lure_swimbait.jpg";
- if(lure.toLowerCase().includes("jig")) return "https://upload.wikimedia.org/wikipedia/commons/5/5a/Jig_lure.jpg";
- return "https://upload.wikimedia.org/wikipedia/commons/2/2a/Soft_plastic_lure.jpg";
+
+  let clean = lure.toLowerCase();
+
+  // EXACT MATCHES FIRST (most important)
+
+  if (clean.includes("football jig")) return "https://i.imgur.com/2GQZ6Zy.jpg";
+  if (clean.includes("swim jig")) return "https://i.imgur.com/Zc7b6hN.jpg";
+  if (clean.includes("flipping jig")) return "https://i.imgur.com/VlX7h3b.jpg";
+
+  if (clean.includes("ned rig")) return "https://i.imgur.com/0XKzn6m.jpg";
+  if (clean.includes("tube")) return "https://i.imgur.com/3zQ6X1F.jpg";
+
+  if (clean.includes("jerkbait")) return "https://i.imgur.com/VX3z5pL.jpg";
+  if (clean.includes("crankbait")) return "https://i.imgur.com/k0W3d9A.jpg";
+
+  if (clean.includes("texas rig")) return "https://i.imgur.com/qkL8F1E.jpg";
+
+  if (clean.includes("paddle tail swimbait")) return "https://i.imgur.com/Jy8Yp6P.jpg";
+  if (clean.includes("swimbait")) return "https://i.imgur.com/Jy8Yp6P.jpg";
+
+  if (clean.includes("minnow")) return "https://i.imgur.com/1Q7Z6vR.jpg";
+
+  // FALLBACKS
+
+  if (clean.includes("jig")) return "https://i.imgur.com/VlX7h3b.jpg";
+
+  return "https://i.imgur.com/Jy8Yp6P.jpg";
 }
 function pairLureDepth(lures, depthZone, species){
 
@@ -358,12 +382,18 @@ confidence = Math.max(40, Math.min(95, confidence));
 
 <div class="small">1. ${lures[0]}</div>
 <img src="${getImage(lures[0].split('(')[0])}">
+<img src="${getImage(lures[1].split('(')[0])}">
+<img src="${getImage(lures[2].split('(')[0])}">
 
 <div class="small">2. ${lures[1]}</div>
 <img src="${getImage(lures[0].split('(')[0])}">
+<img src="${getImage(lures[1].split('(')[0])}">
+<img src="${getImage(lures[2].split('(')[0])}">
 
 <div class="small">3. ${lures[2]}</div>
 <img src="${getImage(lures[0].split('(')[0])}">
+<img src="${getImage(lures[1].split('(')[0])}">
+<img src="${getImage(lures[2].split('(')[0])}">
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
