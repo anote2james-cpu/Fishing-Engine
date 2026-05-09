@@ -267,16 +267,15 @@ if (clean.includes("jerkbait")) return "images/jerkbait.jpg";
 if (clean.includes("crankbait")) return "images/crankbait.jpg";
 
 if (clean.includes("texas rig")) return "images/texas-rig.jpg";
-
+if (clean.includes("paddle tail swimbait")) return "images/swimbait.jpg";
 if (clean.includes("swimbait")) return "images/swimbait.jpg";
 
 if (clean.includes("minnow")) return "images/minnow.jpg";
 
   // FALLBACKS
 
-  if (clean.includes("jig")) return "https://i.imgur.com/VlX7h3b.jpg";
-
-  return "https://i.imgur.com/Jy8Yp6P.jpg";
+  if (clean.includes("jig")) return "images/flipping-jig.jpg";
+return "images/swimbait.jpg";
 }
 function pairLureDepth(lures, depthZone, species){
 
