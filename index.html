@@ -493,7 +493,12 @@ if(structure === "Open Water" && species === "Smallmouth") confidence += 5;
 // CONDITION QUALITY
 if (pressure === "Falling") confidence += 5;
 if (cloud === "Overcast" || cloud === "Rainy") confidence += 5;
-
+  
+// TIME OF DAY
+if(time === "Morning" || time === "Evening") confidence += 5;
+if(time === "Midday" && season === "Summer") confidence -= 3;
+if(time === "Night" && species === "Walleye") confidence += 5;
+if(time === "Night" && species === "Crappie") confidence += 3;
 // SEASON ALIGNMENT BONUS
 if (season === "Pre-Spawn" || season === "Fall") confidence += 5;
 
