@@ -175,13 +175,16 @@ const lakeForage = {
 };
 
 function applyLake(){
+ let lake = document.getElementById("lake").value;
  let forageList = lakeForage[lake];
 
 if(Array.isArray(forageList)){
   document.getElementById("forage").value = forageList[0];
 }
  if(lake!=="Unknown Body of Water"){
-   document.getElementById("forage").value=lakeForage[lake] || "Shad";
+  if(Array.isArray(forageList)){
+  document.getElementById("forage").value = forageList[0];
+}
    
    // Auto clarity defaults by lake
 if (lake === "Lake Erie") document.getElementById("clarity").value = "Stained";
@@ -289,6 +292,7 @@ function getLocation(species,season,structure,wind,forage){
 }
 
 function getLures(species){
+  if(species==="Unknown") return ["Swimbait","Jig","Crankbait"];
  if(species==="Smallmouth") return ["Ned Rig","Tube","Jerkbait"];
  if(species==="Walleye") return ["Jig","Crankbait","Minnow Rig"];
  if(species==="Crappie") return ["Jig","Minnow","Small Swimbait"];
@@ -300,9 +304,8 @@ return [
  "Chatterbait",
  "Crankbait",
  "Topwater",
- "Carolina Rig"
-];
-
+ "Carolina Rig"];
+}
 function matchColorsToLure(lure, clarity){
 
  let baseColors = getColors(clarity);
@@ -406,12 +409,22 @@ function run(){
  let forage=document.getElementById("forage").value;
 
  let season=getSeason(temp);
- let colors=getColors(clarity);
+ let colors = matchColorsToLure(lures[0], clarity);
  let retrieve=getRetrieve(season,species);
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
- let lures=getLures(species);
-  lures = adjustLuresForStructure(lures, structure);
+
+if(structure==="Weedlines" && season!=="Winter"){
+ depthZone = "3–10 ft";
+}
+
+if(structure==="Open Water"){
+ depthZone = "suspended over deeper water";
+}
+
+let lures=getLures(species);
+
+lures = adjustLuresForStructure(lures, structure);
 lures = pairLureDepth(lures, depthZone, species);
  let confidence = 50;
 
@@ -424,13 +437,7 @@ if (clarity) confidence += 5;
 if (wind && wind !== "Calm") confidence += 5;
 if (structure) confidence += 5;
 if (forage) confidence += 5;
-if(structure==="Weedlines" && season!=="Winter"){
- depthZone = "3–10 ft";
-}
 
-if(structure==="Open Water"){
- depthZone = "suspended over deeper water";
-}
 // CONDITION QUALITY
 if (pressure === "Falling") confidence += 5;
 if (cloud === "Overcast" || cloud === "Rainy") confidence += 5;
