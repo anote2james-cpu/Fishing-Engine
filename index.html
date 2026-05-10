@@ -302,7 +302,44 @@ function getLocation(species,season,structure,wind,forage){
 
  return loc;
 }
+function adjustLocationForLakeType(location, lakeType, season, species){
 
+ let extra = "";
+
+ if(lakeType === "Highland Reservoir"){
+   extra = " Focus on deep water access, bluff ends, channel swings, long tapering points, and clear-water transitions.";
+ }
+
+ if(lakeType === "Highland Smallmouth Lake"){
+   extra = " Focus on rocky points, gravel transitions, offshore humps, and deep clear-water structure.";
+ }
+
+ if(lakeType === "TVA Ledge Lake"){
+   extra = " Focus on river ledges, current breaks, shell beds, channel drops, and bait moving along the Tennessee River system.";
+ }
+
+ if(lakeType === "TVA Grass Lake"){
+   extra = " Focus on grass edges, drains, flats, current seams, and wind-blown bait around vegetation.";
+ }
+
+ if(lakeType === "Natural Smallmouth Flat Lake"){
+   extra = " Focus on flats, rock transitions, isolated boulders, scattered grass, and bait roaming across large shallow-to-mid-depth areas.";
+ }
+
+ if(lakeType === "Great Lake"){
+   extra = " Focus on reefs, shoals, rock piles, breaklines, current seams, and bait schools.";
+ }
+
+ if(lakeType === "Shallow Grass Lake"){
+   extra = " Focus on grass mats, reed edges, lanes, holes in vegetation, and bluegill/shiner activity.";
+ }
+
+ if(lakeType === "Small Clear Lake"){
+   extra = " Focus on shade, docks, brush, subtle depth changes, and clean hard-bottom areas.";
+ }
+
+ return location + extra;
+}
 function getLures(species){
   if(species==="Unknown") return ["Swimbait","Jig","Crankbait"];
  if(species==="Smallmouth") return ["Ned Rig","Tube","Jerkbait"];
@@ -468,6 +505,7 @@ let time=document.getElementById("time").value;
  let lakeType = lakeTypes[lake] || "Unknown";
 
  let location=getLocation(species,season,structure,wind,forage);
+  location = adjustLocationForLakeType(location, lakeType, season, species);
  let depthZone = getDepthZone(species, season, structure);
 
 if(structure==="Weedlines" && season!=="Winter"){
