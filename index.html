@@ -722,6 +722,44 @@ function getAvoidPatterns(species, season, structure, time, pressure, cloud, win
 
  return avoids;
 }
+function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
+
+ let style = "Balanced approach";
+
+ if(mood === "Aggressive" || mood === "Active"){
+   style = "Power fish first — cover water with moving baits.";
+ }
+
+ if(mood === "Sluggish"){
+   style = "Finesse first — slow down and pick apart high-percentage targets.";
+ }
+
+ if(pressure === "Rising"){
+   style = "Finesse first — rising pressure usually makes fish tighter and less willing to chase.";
+ }
+
+ if(wind !== "Calm" && (cloud === "Overcast" || cloud === "Rainy")){
+   style = "Power fish — wind and cloud cover favor moving baits and reaction strikes.";
+ }
+
+ if(wind === "Calm" && cloud === "Sunny"){
+   style = "Finesse fish — calm, bright conditions usually require slower, more precise presentations.";
+ }
+
+ if(season === "Winter"){
+   style = "Finesse / slow presentation — cold water usually rewards patience and bottom contact.";
+ }
+
+ if(season === "Fall" && wind !== "Calm"){
+   style = "Power fish — cover water and follow baitfish movement.";
+ }
+
+ if(clarity === "Dirty" && wind !== "Calm"){
+   style = "Power fish with vibration, flash, or a larger profile.";
+ }
+
+ return style;
+}  
   
 function run(){
   let lake=document.getElementById("lake").value;
@@ -749,6 +787,7 @@ if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
 }
 let mood = getMood(pressure, cloud);
+let fishingStyle = getFishingStyle(mood, pressure, cloud, wind, season, clarity);  
 let avoidPatterns = getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage);
 
 let lures=getLures(species);
@@ -815,6 +854,7 @@ let quickOutput = `
 <div class="small">LAKE TYPE: ${lakeType}</div>
 <div class="out">WHERE: ${location}</div>
 <div class="small">DEPTH: ${depthZone}</div>
+<div class="small">STYLE: ${fishingStyle}</div>
 <div class="small">WATCH OUT: ${avoidPatterns[0]}</div>
 <div class="out">THROW:</div>
 
@@ -838,6 +878,7 @@ let detailedOutput = `
 <div class="small">SEASONAL MOVEMENT: ${migration}</div>
 <div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
 <div class="small">FEEDING WINDOW: ${feedingWindow}</div>
+<div class="small">FISHING STYLE: ${fishingStyle}</div>
 <div class="out">AVOID:</div>
 ${avoidText}
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
