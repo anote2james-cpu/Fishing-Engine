@@ -674,6 +674,54 @@ function getLureRole(index, lure, mood){
 
  return "OPTION";
 }
+function getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage){
+
+ let avoids = [];
+
+ if(season === "Winter"){
+   avoids.push("Avoid fast, shallow presentations unless you see active bait or feeding fish.");
+ }
+
+ if(season === "Winter" && structure === "Flats"){
+   avoids.push("Avoid spending too much time on featureless flats in cold water.");
+ }
+
+ if(time === "Midday" && cloud === "Sunny" && pressure === "Rising"){
+   avoids.push("Avoid random shallow casting. Focus on shade, cover, deeper edges, or slower presentations.");
+ }
+
+ if(wind === "Calm" && cloud === "Sunny"){
+   avoids.push("Avoid noisy power fishing unless fish are visibly chasing bait.");
+ }
+
+ if(species === "Smallmouth" && structure === "Weedlines"){
+   avoids.push("Avoid treating weedlines as the primary smallmouth pattern unless rock, bait, or scattered grass is nearby.");
+ }
+
+ if(species === "Walleye" && time === "Midday" && cloud === "Sunny"){
+   avoids.push("Avoid shallow bright-water walleye patterns during midday unless wind, current, or stained water is present.");
+ }
+
+ if(species === "Crappie" && structure === "Open Water"){
+   avoids.push("Avoid searching open water randomly. Look for bait balls, suspended schools, brush, timber, or bridge structure.");
+ }
+
+ if(forage === "Goby" || forage === "Crawfish"){
+   if(structure === "Open Water"){
+     avoids.push("Avoid staying too high in the water column when the main forage is bottom-oriented.");
+   }
+ }
+
+ if(forage === "Shad" && season === "Fall"){
+   avoids.push("Avoid dead water with no bait. In fall, bait presence matters more than the bank itself.");
+ }
+
+ if(avoids.length === 0){
+   avoids.push("No major red flags. Fish the recommended pattern, but adjust quickly if bait or bites are missing.");
+ }
+
+ return avoids;
+}
   
 function run(){
   let lake=document.getElementById("lake").value;
@@ -701,7 +749,7 @@ if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
 }
 let mood = getMood(pressure, cloud);
-
+let avoidPatterns = getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage);
 
 let lures=getLures(species);
 if(time === "Morning" || time === "Evening"){
@@ -721,6 +769,7 @@ let colors = [
 
 // remove duplicates
 colors = [...new Set(colors)];
+ let avoidText = avoidPatterns.map(item => `<div class="small">• ${item}</div>`).join(""); 
  let confidence = 45;
 
  
@@ -766,7 +815,7 @@ let quickOutput = `
 <div class="small">LAKE TYPE: ${lakeType}</div>
 <div class="out">WHERE: ${location}</div>
 <div class="small">DEPTH: ${depthZone}</div>
-
+<div class="small">WATCH OUT: ${avoidPatterns[0]}</div>
 <div class="out">THROW:</div>
 
 <div class="small">${getLureRole(0, lures[0], mood)}<br>1. ${lures[0]}</div>
@@ -789,6 +838,8 @@ let detailedOutput = `
 <div class="small">SEASONAL MOVEMENT: ${migration}</div>
 <div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
 <div class="small">FEEDING WINDOW: ${feedingWindow}</div>
+<div class="out">AVOID:</div>
+${avoidText}
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
