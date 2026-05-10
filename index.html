@@ -110,7 +110,12 @@ label{font-size:13px;color:#9fb3c8}
 <option>Stable</option>
 <option>Falling</option>
 </select>
-
+<label>View Mode</label>
+<select id="viewMode">
+<option>Quick</option>
+<option>Detailed</option>
+</select>
+  
 <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 
@@ -658,7 +663,7 @@ function run(){
 let time=document.getElementById("time").value;
 let pressure = document.getElementById("pressure").value;
 let cloud = document.getElementById("cloud").value;  
-  
+  let viewMode=document.getElementById("viewMode").value;
  let season=getSeason(temp);
  let lakeType = lakeTypes[lake] || "Unknown";
  
@@ -732,7 +737,25 @@ if (species === "Crappie" && structure === "Open Water") confidence -= 6;
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 
- document.getElementById("out").innerHTML=`
+let quickOutput = `
+<div class="out">TARGET: ${species}</div>
+<div class="out">PATTERN: ${season} ${species} pattern</div>
+<div class="small">LAKE TYPE: ${lakeType}</div>
+<div class="out">WHERE: ${location}</div>
+<div class="small">DEPTH: ${depthZone}</div>
+
+<div class="out">THROW:</div>
+<div class="small">1. ${lures[0]}</div>
+<img src="${getImage(lures[0].split(' (')[0])}">
+<div class="small">2. ${lures[1]}</div>
+<div class="small">3. ${lures[2]}</div>
+
+<div class="small">COLORS: ${colors.join(" • ")}</div>
+<div class="small">RETRIEVE: ${retrieve}</div>
+<div class="small">CONFIDENCE: ${confidence}%</div>
+`;
+
+let detailedOutput = `
 <div class="out">TARGET: ${species}</div>
 <div class="out">SEASON: ${season}</div>
 <div class="small">LAKE TYPE: ${lakeType}</div>
@@ -743,7 +766,6 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
-
 <div class="small">FISH MOOD: ${getMood(pressure,cloud)}</div>
 
 <div class="small">1. ${lures[0]}</div>
@@ -759,6 +781,9 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="small">RETRIEVE: ${retrieve}</div>
 <div class="small">CONFIDENCE: ${confidence}%</div>
 `;
+
+document.getElementById("out").innerHTML =
+  viewMode === "Quick" ? quickOutput : detailedOutput;
 }
 
 </script>
