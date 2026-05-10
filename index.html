@@ -340,6 +340,58 @@ function adjustLocationForLakeType(location, lakeType, season, species){
 
  return location + extra;
 }
+function getSeasonalMigration(season, species, lakeType){
+
+ let migration = "";
+
+ if(species === "Largemouth"){
+   if(season === "Winter") migration = "Winter pattern: start near the deepest available cover, channel bends, bluff banks, or vertical structure close to bait.";
+   if(season === "Pre-Spawn") migration = "Pre-spawn pattern: fish are moving from wintering areas toward spawning flats. Start on secondary points, channel swings, and staging cover.";
+   if(season === "Spawn") migration = "Spawn pattern: look for protected shallow pockets, hard bottom, beds, and cover near spawning flats.";
+   if(season === "Post-Spawn") migration = "Post-spawn pattern: fish are recovering near the first break, bluegill beds, shade, and cover close to spawning areas.";
+   if(season === "Summer") migration = "Summer pattern: look offshore on ledges, grass edges, deeper points, brush piles, docks, and areas with bait or current.";
+   if(season === "Fall") migration = "Fall pattern: follow baitfish into creeks, pockets, shallow flats, and wind-blown banks.";
+ }
+
+ if(species === "Smallmouth"){
+   if(season === "Winter") migration = "Winter pattern: smallmouth often hold deeper on rock, humps, bluff ends, and vertical structure near bait.";
+   if(season === "Pre-Spawn") migration = "Pre-spawn pattern: smallmouth stage on rocky points, gravel transitions, shoals, and breaks close to spawning areas.";
+   if(season === "Spawn") migration = "Spawn pattern: look for gravel, sand, rock transitions, protected bays, and shallow flats near deeper water.";
+   if(season === "Post-Spawn") migration = "Post-spawn pattern: fish slide back to points, shoals, breaks, and roam near bait.";
+   if(season === "Summer") migration = "Summer pattern: focus on offshore rock, humps, deep grass edges, current breaks, and suspended bait.";
+   if(season === "Fall") migration = "Fall pattern: smallmouth chase bait across flats, points, shoals, rock transitions, and wind-blown areas.";
+ }
+
+ if(species === "Walleye"){
+   if(season === "Winter") migration = "Winter pattern: look deeper near basin edges, channel drops, bait schools, and slow-moving presentations.";
+   if(season === "Pre-Spawn") migration = "Pre-spawn pattern: walleye move toward gravel, current, neck-down areas, and spawning approaches.";
+   if(season === "Spawn") migration = "Spawn pattern: focus on rocky shorelines, gravel, current areas, and shallow spawning zones during low light.";
+   if(season === "Post-Spawn") migration = "Post-spawn pattern: fish recover near nearby breaks, flats, and transition zones before sliding deeper.";
+   if(season === "Summer") migration = "Summer pattern: focus on deeper structure, trolling lanes, points, humps, and baitfish schools.";
+   if(season === "Fall") migration = "Fall pattern: walleye follow bait into shallower feeding areas, wind-blown points, and night-feeding zones.";
+ }
+
+ if(species === "Crappie"){
+   if(season === "Winter") migration = "Winter pattern: crappie group up deeper near brush, creek channels, standing timber, and bait.";
+   if(season === "Pre-Spawn") migration = "Pre-spawn pattern: crappie move toward coves, creek arms, brush, docks, and staging timber.";
+   if(season === "Spawn") migration = "Spawn pattern: look shallow around brush, stake beds, docks, grass, and protected banks.";
+   if(season === "Post-Spawn") migration = "Post-spawn pattern: fish scatter first, then regroup around docks, brush, timber, and nearby breaks.";
+   if(season === "Summer") migration = "Summer pattern: target deeper brush, shaded docks, bridge pilings, timber, and suspended schools.";
+   if(season === "Fall") migration = "Fall pattern: crappie follow bait into creek arms, brush piles, docks, and channel edges.";
+ }
+
+ if(species === "Unknown"){
+   if(season === "Winter") migration = "Winter pattern: start deeper and slower near bait, vertical structure, and the most stable water.";
+   if(season === "Pre-Spawn") migration = "Pre-spawn pattern: start on staging areas between deep winter water and shallow spawning flats.";
+   if(season === "Spawn") migration = "Spawn pattern: check protected shallow areas with cover, hard bottom, and warmer water.";
+   if(season === "Post-Spawn") migration = "Post-spawn pattern: start near the first break outside spawning areas and around available shade or bait.";
+   if(season === "Summer") migration = "Summer pattern: look for shade, current, offshore structure, grass edges, deeper water, or bait schools.";
+   if(season === "Fall") migration = "Fall pattern: follow bait into creeks, pockets, flats, and wind-blown areas.";
+ }
+
+ return migration;
+}
+  
 function getLures(species){
   if(species==="Unknown") return ["Swimbait","Jig","Crankbait"];
  if(species==="Smallmouth") return ["Ned Rig","Tube","Jerkbait"];
@@ -506,6 +558,7 @@ let time=document.getElementById("time").value;
 
  let location=getLocation(species,season,structure,wind,forage);
   location = adjustLocationForLakeType(location, lakeType, season, species);
+  let migration = getSeasonalMigration(season, species, lakeType);
  let depthZone = getDepthZone(species, season, structure);
 
 if(structure==="Weedlines" && season!=="Winter"){
@@ -577,6 +630,7 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="out">SEASON: ${season}</div>
 <div class="small">LAKE TYPE: ${lakeType}</div>
 <div class="out">WHERE: ${location}</div>
+<div class="small">SEASONAL MOVEMENT: ${migration}</div>
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
