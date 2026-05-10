@@ -1082,34 +1082,84 @@ let quickOutput = `
 `;
 
 let detailedOutput = `
-<div class="out">TARGET: ${species}</div>
-<div class="out">SEASON: ${season}</div>
-<div class="small">LAKE TYPE: ${lakeType}</div>
-<div class="out">WHERE: ${location}</div>
-<div class="small">SEASONAL MOVEMENT: ${migration}</div>
-<div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
-<div class="small">FEEDING WINDOW: ${feedingWindow}</div>
-<div class="small">FISHING STYLE: ${fishingStyle}</div>
-<div class="small">MAP SEARCH: ${mapGuidance}</div>
-<div class="out">AVOID:</div>
-${avoidText}
-<div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
+<div class="result-card">
+  <div class="muted">🎯 TARGET</div>
+  <div class="out">${species}</div>
+  <div class="small">Season: ${season}</div>
+  <div class="small">Lake Type: ${lakeType}</div>
+  <div class="small">Fish Mood: ${mood}</div>
+</div>
 
-<div class="out">TOP 3:</div>
-<div class="small">FISH MOOD: ${mood}</div>
+<div class="result-card">
+  <div class="muted">📍 WHERE</div>
+  <div class="small">${location}</div>
+  <div class="small">Primary Depth Zone: ${depthZone} (${season} range)</div>
+</div>
 
-<div class="small">${getLureRole(0, lures[0], mood)}<br>1. ${lures[0]}</div>
-<img src="${getImage(lures[0].split(' (')[0])}">
+<div class="result-card">
+  <div class="muted">🧭 SEASONAL MOVEMENT</div>
+  <div class="small">${migration}</div>
+</div>
 
-<div class="small">${getLureRole(1, lures[1], mood)}<br>2. ${lures[1]}</div>
-<img src="${getImage(lures[1].split(' (')[0])}">
+<div class="result-card">
+  <div class="muted">🐟 FORAGE BEHAVIOR</div>
+  <div class="small">${forageBehavior}</div>
+</div>
 
-<div class="small">${getLureRole(2, lures[2], mood)}<br>3. ${lures[2]}</div>
-<img src="${getImage(lures[2].split(' (')[0])}">
+<div class="result-card">
+  <div class="muted">⏱️ FEEDING WINDOW</div>
+  <div class="small">${feedingWindow}</div>
+</div>
 
-<div class="small">COLORS: ${colors.join(" • ")}</div>
-<div class="small">RETRIEVE: ${retrieve}</div>
-<div class="small">CONFIDENCE: ${confidence}%</div>
+<div class="result-card">
+  <div class="muted">🔥 FISHING STYLE</div>
+  <div class="small">${fishingStyle}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">🗺️ MAP SEARCH</div>
+  <div class="small">${mapGuidance}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">⚠️ AVOID</div>
+  ${avoidText}
+</div>
+
+<div class="hero-bait">
+  <div class="badge">PRIMARY BAIT</div>
+  <div class="hero-title">${lures[0].split(" (")[0]}</div>
+  <div class="small">${getLureRole(0, lures[0], mood)}</div>
+  <img src="${getImage(lures[0].split(' (')[0])}">
+  <div class="small">${lures[0]}</div>
+  <div class="small">Retrieve: ${retrieve}</div>
+</div>
+
+<div class="grid-2">
+  <div class="result-card">
+    <div class="muted">SECONDARY</div>
+    <div class="small">${getLureRole(1, lures[1], mood)}</div>
+    <div class="small">${lures[1]}</div>
+    <img src="${getImage(lures[1].split(' (')[0])}">
+  </div>
+
+  <div class="result-card">
+    <div class="muted">FALLBACK</div>
+    <div class="small">${getLureRole(2, lures[2], mood)}</div>
+    <div class="small">${lures[2]}</div>
+    <img src="${getImage(lures[2].split(' (')[0])}">
+  </div>
+</div>
+
+<div class="result-card">
+  <div class="muted">🎨 COLORS</div>
+  <div class="small">${colors.join(" • ")}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">CONFIDENCE</div>
+  <div class="out">${confidence}%</div>
+</div>
 `;
 
 document.getElementById("out").innerHTML =
