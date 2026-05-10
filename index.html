@@ -652,6 +652,29 @@ if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible ba
 
  return getRetrieve(season, species);
 } 
+function getLureRole(index, lure, mood){
+
+ if(index === 0){
+   return "PRIMARY — best starting bait";
+ }
+
+ if(index === 1){
+   if(mood === "Aggressive" || mood === "Active"){
+     return "SECONDARY — active fish option";
+   }
+   return "SECONDARY — alternate presentation";
+ }
+
+ if(index === 2){
+   if(mood === "Sluggish"){
+     return "FALLBACK — tough bite backup";
+   }
+   return "FALLBACK — change-up bait";
+ }
+
+ return "OPTION";
+}
+  
 function run(){
   let lake=document.getElementById("lake").value;
  let species=document.getElementById("species").value;
@@ -677,7 +700,7 @@ let depthZone = getDepthZone(species, season, structure);
 if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
 }
-
+let mood = getMood(pressure, cloud);
 
 
 let lures=getLures(species);
@@ -745,10 +768,13 @@ let quickOutput = `
 <div class="small">DEPTH: ${depthZone}</div>
 
 <div class="out">THROW:</div>
-<div class="small">1. ${lures[0]}</div>
+
+<div class="small">${getLureRole(0, lures[0], mood)}<br>1. ${lures[0]}</div>
 <img src="${getImage(lures[0].split(' (')[0])}">
-<div class="small">2. ${lures[1]}</div>
-<div class="small">3. ${lures[2]}</div>
+
+<div class="small">${getLureRole(1, lures[1], mood)}<br>2. ${lures[1]}</div>
+
+<div class="small">${getLureRole(2, lures[2], mood)}<br>3. ${lures[2]}</div>
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
 <div class="small">RETRIEVE: ${retrieve}</div>
@@ -766,15 +792,15 @@ let detailedOutput = `
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
-<div class="small">FISH MOOD: ${getMood(pressure,cloud)}</div>
+<div class="small">FISH MOOD: ${mood}</div>
 
-<div class="small">1. ${lures[0]}</div>
+<div class="small">${getLureRole(0, lures[0], mood)}<br>1. ${lures[0]}</div>
 <img src="${getImage(lures[0].split(' (')[0])}">
 
-<div class="small">2. ${lures[1]}</div>
+<div class="small">${getLureRole(1, lures[1], mood)}<br>2. ${lures[1]}</div>
 <img src="${getImage(lures[1].split(' (')[0])}">
 
-<div class="small">3. ${lures[2]}</div>
+<div class="small">${getLureRole(2, lures[2], mood)}<br>3. ${lures[2]}</div>
 <img src="${getImage(lures[2].split(' (')[0])}">
 
 <div class="small">COLORS: ${colors.join(" • ")}</div>
