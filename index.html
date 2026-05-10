@@ -444,6 +444,56 @@ function getForageBehavior(forage, season, lakeType){
 
  return behavior;
 }
+function getFeedingWindow(time, pressure, cloud, wind, season){
+
+ let window = "";
+
+ if(time === "Morning"){
+   window = "Feeding window: morning is usually a strong feeding window, especially around shallow cover, bait activity, shade, or wind.";
+ }
+
+ if(time === "Evening"){
+   window = "Feeding window: evening often improves the bite as light gets lower and bait moves shallower.";
+ }
+
+ if(time === "Midday"){
+   window = "Feeding window: midday can be tougher, especially in clear water or bright sun. Focus on shade, deeper edges, current, or slower presentations.";
+ }
+
+ if(time === "Night"){
+   window = "Feeding window: night fishing favors low-light predators, shallow movement, dark silhouettes, vibration, and slower target-oriented presentations.";
+ }
+
+ if(pressure === "Falling"){
+   window += " Falling pressure usually improves activity and can make fish more willing to chase.";
+ }
+
+ if(pressure === "Rising"){
+   window += " Rising pressure usually makes fish tighter to cover and more cautious, so slow down.";
+ }
+
+ if(cloud === "Overcast" || cloud === "Rainy"){
+   window += " Cloud cover can extend the bite window and make moving baits stronger.";
+ }
+
+ if(wind !== "Calm"){
+   window += " Wind can position bait and make fish more aggressive on wind-blown areas.";
+ }
+
+ if(wind === "Calm" && cloud === "Sunny"){
+   window += " Calm, sunny conditions usually call for finesse, shade, deeper water, or precise casts.";
+ }
+
+ if(season === "Winter"){
+   window += " In winter, the best window is often shorter, so slow presentations and stable areas matter more.";
+ }
+
+ if(season === "Fall"){
+   window += " In fall, feeding windows can be strong but bait movement is the key.";
+ }
+
+ return window;
+}
   
 function getLures(species){
   if(species==="Unknown") return ["Swimbait","Jig","Crankbait"];
@@ -606,14 +656,18 @@ function run(){
  let structure=document.getElementById("structure").value;
  let forage=document.getElementById("forage").value;
 let time=document.getElementById("time").value;
+let pressure = document.getElementById("pressure").value;
+let cloud = document.getElementById("cloud").value;  
+  
  let season=getSeason(temp);
  let lakeType = lakeTypes[lake] || "Unknown";
-
+ 
  let location=getLocation(species,season,structure,wind,forage);
-  location = adjustLocationForLakeType(location, lakeType, season, species);
-  let migration = getSeasonalMigration(season, species, lakeType);
- let forageBehavior = getForageBehavior(forage, season, lakeType); 
- let depthZone = getDepthZone(species, season, structure);
+location = adjustLocationForLakeType(location, lakeType, season, species);
+let migration = getSeasonalMigration(season, species, lakeType);
+let forageBehavior = getForageBehavior(forage, season, lakeType);
+let feedingWindow = getFeedingWindow(time, pressure, cloud, wind, season);
+let depthZone = getDepthZone(species, season, structure);
 
 if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
@@ -641,8 +695,7 @@ let colors = [
 colors = [...new Set(colors)];
  let confidence = 45;
 
- let pressure = document.getElementById("pressure").value;
-let cloud = document.getElementById("cloud").value; 
+ 
 // INPUT COMPLETENESS
 if (species && species !== "Unknown") confidence += 10;
 if (temp) confidence += 10;
@@ -686,6 +739,7 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="out">WHERE: ${location}</div>
 <div class="small">SEASONAL MOVEMENT: ${migration}</div>
 <div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
+<div class="small">FEEDING WINDOW: ${feedingWindow}</div>
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
