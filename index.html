@@ -391,6 +391,59 @@ function getSeasonalMigration(season, species, lakeType){
 
  return migration;
 }
+function getForageBehavior(forage, season, lakeType){
+
+ let behavior = "";
+
+ if(forage === "Shad"){
+   if(season === "Winter") behavior = "Forage behavior: shad often group up deeper and suspend near stable water and bait schools.";
+   if(season === "Pre-Spawn") behavior = "Forage behavior: shad begin moving toward warming pockets, creek arms, and wind-blown banks.";
+   if(season === "Spawn") behavior = "Forage behavior: shad may move shallow around cover, riprap, and hard edges, especially early and late.";
+   if(season === "Post-Spawn") behavior = "Forage behavior: shad activity increases near points, shade, and shallow-to-mid-depth feeding areas.";
+   if(season === "Summer") behavior = "Forage behavior: shad often suspend offshore, relate to current, or group around ledges, points, and deeper structure.";
+   if(season === "Fall") behavior = "Forage behavior: shad push shallow into creeks, pockets, flats, and wind-blown banks.";
+ }
+
+ if(forage === "Bluegill"){
+   if(season === "Winter") behavior = "Forage behavior: bluegill tend to hold tighter to cover, deeper grass, brush, or protected areas.";
+   if(season === "Pre-Spawn") behavior = "Forage behavior: bluegill move gradually toward shallower cover as water warms.";
+   if(season === "Spawn") behavior = "Forage behavior: bluegill become important around shallow cover, beds, docks, and grass.";
+   if(season === "Post-Spawn") behavior = "Forage behavior: bluegill beds and shallow cover can create strong feeding opportunities.";
+   if(season === "Summer") behavior = "Forage behavior: bluegill stay around grass, docks, shade, shallow cover, and edges.";
+   if(season === "Fall") behavior = "Forage behavior: bluegill remain cover-oriented but may shift with cooling water and bait movement.";
+ }
+
+ if(forage === "Crawfish"){
+   if(season === "Winter") behavior = "Forage behavior: crawfish activity is reduced, so slow bottom contact is usually better.";
+   if(season === "Pre-Spawn") behavior = "Forage behavior: crawfish become more active as the water warms, especially around rock and hard bottom.";
+   if(season === "Spawn") behavior = "Forage behavior: crawfish stay bottom-oriented around rock, gravel, and cover.";
+   if(season === "Post-Spawn") behavior = "Forage behavior: crawfish patterns remain strong around rock, points, and hard-bottom transitions.";
+   if(season === "Summer") behavior = "Forage behavior: crawfish are usually best around rock, shade, grass edges, and bottom irregularities.";
+   if(season === "Fall") behavior = "Forage behavior: crawfish can still matter, but baitfish patterns often become stronger.";
+ }
+
+ if(forage === "Goby"){
+   behavior = "Forage behavior: gobies stay bottom-oriented around rock, gravel, sand transitions, and hard-bottom areas. Keep baits close to bottom.";
+ }
+
+ if(forage === "Perch"){
+   behavior = "Forage behavior: perch often roam in groups around grass edges, flats, rock transitions, and bait-rich areas.";
+ }
+
+ if(forage === "Alewife" || forage === "Herring"){
+   behavior = "Forage behavior: alewife/herring are open-water baitfish. Look for suspended fish, points, deep water access, wind, and bait schools.";
+ }
+
+ if(forage === "Shiners"){
+   behavior = "Forage behavior: shiners often relate to shallow vegetation, clean water, edges, holes, and roaming predator activity.";
+ }
+
+ if(forage === "Mixed"){
+   behavior = "Forage behavior: mixed forage means you should let conditions decide. Use baitfish patterns in wind/clouds and bottom-contact patterns around rock or cover.";
+ }
+
+ return behavior;
+}
   
 function getLures(species){
   if(species==="Unknown") return ["Swimbait","Jig","Crankbait"];
@@ -559,6 +612,7 @@ let time=document.getElementById("time").value;
  let location=getLocation(species,season,structure,wind,forage);
   location = adjustLocationForLakeType(location, lakeType, season, species);
   let migration = getSeasonalMigration(season, species, lakeType);
+ let forageBehavior = getForageBehavior(forage, season, lakeType); 
  let depthZone = getDepthZone(species, season, structure);
 
 if(structure==="Weedlines" && season!=="Winter"){
@@ -631,6 +685,7 @@ confidence = Math.max(40, Math.min(95, confidence));
 <div class="small">LAKE TYPE: ${lakeType}</div>
 <div class="out">WHERE: ${location}</div>
 <div class="small">SEASONAL MOVEMENT: ${migration}</div>
+<div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
 <div class="out">TOP 3:</div>
