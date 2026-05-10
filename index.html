@@ -176,7 +176,21 @@ const lakeForage = {
  "Guntersville Lake":["Shad","Bluegill"],
  "Lake Okeechobee":["Bluegill","Shiners"]
 };
-
+const lakeTypes = {
+ "Laurel River Lake":"Highland Reservoir",
+ "Lake Cumberland":"Highland Reservoir",
+ "Wood Creek Lake":"Small Clear Lake",
+ "Kentucky Lake":"TVA Ledge Lake",
+ "Lake Chickamauga":"TVA Grass Lake",
+ "Dale Hollow Lake":"Highland Smallmouth Lake",
+ "Lake Cherokee":"Highland Reservoir",
+ "Norris Lake":"Highland Reservoir",
+ "Lake St. Clair":"Natural Smallmouth Flat Lake",
+ "Lake Erie":"Great Lake",
+ "Guntersville Lake":"TVA Grass Lake",
+ "Lake Okeechobee":"Shallow Grass Lake",
+ "Unknown Body of Water":"Unknown"
+};
 function applyLake(){
  let lake = document.getElementById("lake").value;
  let forageList = lakeForage[lake];
@@ -442,6 +456,7 @@ if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible ba
  return getRetrieve(season, species);
 } 
 function run(){
+  let lake=document.getElementById("lake").value;
  let species=document.getElementById("species").value;
  let temp=parseFloat(document.getElementById("temp").value)||60;
  let clarity=document.getElementById("clarity").value;
@@ -450,7 +465,7 @@ function run(){
  let forage=document.getElementById("forage").value;
 let time=document.getElementById("time").value;
  let season=getSeason(temp);
- 
+ let lakeType = lakeTypes[lake] || "Unknown";
 
  let location=getLocation(species,season,structure,wind,forage);
  let depthZone = getDepthZone(species, season, structure);
@@ -522,6 +537,7 @@ confidence = Math.max(40, Math.min(95, confidence));
  document.getElementById("out").innerHTML=`
 <div class="out">TARGET: ${species}</div>
 <div class="out">SEASON: ${season}</div>
+<div class="small">LAKE TYPE: ${lakeType}</div>
 <div class="out">WHERE: ${location}</div>
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
 
