@@ -79,6 +79,51 @@ label{
  font-weight:700;
  letter-spacing:.3px;
 }
+.result-card{
+ background:#08141e;
+ border:1px solid #1e3a4d;
+ border-radius:16px;
+ padding:14px;
+ margin:12px 0;
+}
+
+.hero-bait{
+ background:linear-gradient(180deg,#123044,#08141e);
+ border:1px solid #38bdf8;
+ border-radius:18px;
+ padding:16px;
+ margin:14px 0;
+ box-shadow:0 0 22px rgba(56,189,248,.22);
+}
+
+.badge{
+ display:inline-block;
+ background:#38bdf8;
+ color:#001018;
+ padding:4px 9px;
+ border-radius:999px;
+ font-size:12px;
+ font-weight:800;
+ margin-bottom:8px;
+}
+
+.hero-title{
+ font-size:28px;
+ font-weight:900;
+ margin:6px 0;
+ letter-spacing:.5px;
+}
+
+.grid-2{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+
+.muted{
+ color:#9fb3c8;
+ font-size:13px;
+} 
 </style>
 </head>
 <body>
@@ -986,26 +1031,54 @@ if (species === "Crappie" && structure === "Open Water") confidence -= 6;
 confidence = Math.max(40, Math.min(95, confidence));
 
 let quickOutput = `
-<div class="out">TARGET: ${species}</div>
-<div class="out">PATTERN: ${season} ${species} pattern</div>
-<div class="small">LAKE TYPE: ${lakeType}</div>
-<div class="out">WHERE: ${location}</div>
-<div class="small">DEPTH: ${depthZone}</div>
-<div class="small">STYLE: ${fishingStyle}</div>
-<div class="small">MAP: ${mapGuidance}</div>
-<div class="small">WATCH OUT: ${avoidPatterns[0]}</div>
-<div class="out">THROW:</div>
+<div class="result-card">
+  <div class="muted">🎯 TARGET</div>
+  <div class="out">${species}</div>
+  <div class="small">Pattern: ${season} ${species}</div>
+  <div class="small">Lake Type: ${lakeType}</div>
+</div>
 
-<div class="small">${getLureRole(0, lures[0], mood)}<br>1. ${lures[0]}</div>
-<img src="${getImage(lures[0].split(' (')[0])}">
+<div class="result-card">
+  <div class="muted">📍 WHERE TO START</div>
+  <div class="small">${location}</div>
+  <div class="small">Depth: ${depthZone}</div>
+</div>
 
-<div class="small">${getLureRole(1, lures[1], mood)}<br>2. ${lures[1]}</div>
+<div class="hero-bait">
+  <div class="badge">PRIMARY BAIT</div>
+  <div class="hero-title">${lures[0].split(" (")[0]}</div>
+  <img src="${getImage(lures[0].split(' (')[0])}">
+  <div class="small">${lures[0]}</div>
+  <div class="small">Retrieve: ${retrieve}</div>
+  <div class="small">Colors: ${colors.join(" • ")}</div>
+</div>
 
-<div class="small">${getLureRole(2, lures[2], mood)}<br>3. ${lures[2]}</div>
+<div class="grid-2">
+  <div class="result-card">
+    <div class="muted">SECONDARY</div>
+    <div class="small">${lures[1]}</div>
+  </div>
 
-<div class="small">COLORS: ${colors.join(" • ")}</div>
-<div class="small">RETRIEVE: ${retrieve}</div>
-<div class="small">CONFIDENCE: ${confidence}%</div>
+  <div class="result-card">
+    <div class="muted">FALLBACK</div>
+    <div class="small">${lures[2]}</div>
+  </div>
+</div>
+
+<div class="result-card">
+  <div class="muted">🔥 STYLE</div>
+  <div class="small">${fishingStyle}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">⚠️ WATCH OUT</div>
+  <div class="small">${avoidPatterns[0]}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">CONFIDENCE</div>
+  <div class="out">${confidence}%</div>
+</div>
 `;
 
 let detailedOutput = `
