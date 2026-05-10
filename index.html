@@ -124,6 +124,21 @@ label{
  color:#9fb3c8;
  font-size:13px;
 } 
+.advanced{
+ margin-top:14px;
+ background:#08141e;
+ border:1px solid #1e3a4d;
+ border-radius:16px;
+ padding:12px;
+}
+
+.advanced summary{
+ cursor:pointer;
+ font-size:15px;
+ font-weight:800;
+ color:#38bdf8;
+ margin-bottom:8px;
+} 
 </style>
 </head>
 <body>
@@ -199,6 +214,8 @@ label{
 <option>Mixed</option>
 </select>
 
+<details class="advanced">
+<summary>Advanced Conditions</summary>
 <label>Cloud Cover</label>
 <select id="cloud">
 <option>Sunny</option>
@@ -226,7 +243,8 @@ label{
 <option>Quick</option>
 <option>Detailed</option>
 </select>
-  
+ 
+</details>
 <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 
