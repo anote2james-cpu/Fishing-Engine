@@ -760,6 +760,76 @@ function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
 
  return style;
 }  
+ function getMapSearchGuidance(lakeType, season, species, structure, forage){
+
+ let guidance = "";
+
+ if(lakeType === "Highland Reservoir"){
+   guidance = "Map search: look for long points, bluff ends, channel swings, creek mouths, and deep water close to shallow feeding areas.";
+ }
+
+ if(lakeType === "Highland Smallmouth Lake"){
+   guidance = "Map search: look for rocky points, humps, gravel flats, bluff ends, and transitions near deep clear water.";
+ }
+
+ if(lakeType === "TVA Ledge Lake"){
+   guidance = "Map search: look for river ledges, shell beds, channel drops, current breaks, creek mouths, and offshore bars.";
+ }
+
+ if(lakeType === "TVA Grass Lake"){
+   guidance = "Map search: look for grass edges, drains, flats near channels, outside grass lines, current seams, and wind-blown vegetation.";
+ }
+
+ if(lakeType === "Natural Smallmouth Flat Lake"){
+   guidance = "Map search: look for flats with rock transitions, isolated boulders, scattered grass, shoals, and nearby bait movement.";
+ }
+
+ if(lakeType === "Great Lake"){
+   guidance = "Map search: look for reefs, shoals, rock piles, breaklines, current seams, and bait schools.";
+ }
+
+ if(lakeType === "Shallow Grass Lake"){
+   guidance = "Map search: look for grass mats, reed lines, holes, lanes, clean bottom patches, and bluegill or shiner activity.";
+ }
+
+ if(lakeType === "Small Clear Lake"){
+   guidance = "Map search: look for docks, shade lines, brush, subtle depth changes, hard bottom, and edges close to deeper water.";
+ }
+
+ if(lakeType === "Unknown"){
+   guidance = "Map search: start with the most obvious high-percentage areas: points, creek mouths, visible cover, shade, depth changes, and bait activity.";
+ }
+
+ if(season === "Pre-Spawn"){
+   guidance += " Prioritize routes between deep winter water and shallow spawning flats.";
+ }
+
+ if(season === "Spawn"){
+   guidance += " Prioritize protected pockets, flats, hard bottom, and areas shielded from heavy wind.";
+ }
+
+ if(season === "Post-Spawn"){
+   guidance += " Prioritize the first break outside spawning areas, shade, bluegill beds, and nearby bait.";
+ }
+
+ if(season === "Summer"){
+   guidance += " Prioritize shade, current, offshore structure, grass edges, thermocline depth, and bait schools.";
+ }
+
+ if(season === "Fall"){
+   guidance += " Prioritize bait first — creeks, pockets, flats, wind-blown banks, and baitfish migration routes.";
+ }
+
+ if(forage === "Goby" || forage === "Crawfish"){
+   guidance += " Since the forage is bottom-oriented, focus on hard bottom, rock, gravel, shell, or transitions.";
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   guidance += " Since the forage is baitfish-oriented, use electronics or visual activity to find schools before committing.";
+ }
+
+ return guidance;
+} 
   
 function run(){
   let lake=document.getElementById("lake").value;
@@ -788,6 +858,7 @@ if(structure==="Weedlines" && season!=="Winter"){
 }
 let mood = getMood(pressure, cloud);
 let fishingStyle = getFishingStyle(mood, pressure, cloud, wind, season, clarity);  
+let mapGuidance = getMapSearchGuidance(lakeType, season, species, structure, forage); 
 let avoidPatterns = getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage);
 
 let lures=getLures(species);
@@ -855,6 +926,7 @@ let quickOutput = `
 <div class="out">WHERE: ${location}</div>
 <div class="small">DEPTH: ${depthZone}</div>
 <div class="small">STYLE: ${fishingStyle}</div>
+<div class="small">MAP: ${mapGuidance}</div>
 <div class="small">WATCH OUT: ${avoidPatterns[0]}</div>
 <div class="out">THROW:</div>
 
@@ -879,6 +951,7 @@ let detailedOutput = `
 <div class="small">FORAGE BEHAVIOR: ${forageBehavior}</div>
 <div class="small">FEEDING WINDOW: ${feedingWindow}</div>
 <div class="small">FISHING STYLE: ${fishingStyle}</div>
+<div class="small">MAP SEARCH: ${mapGuidance}</div>
 <div class="out">AVOID:</div>
 ${avoidText}
 <div class="small">PRIMARY DEPTH ZONE: ${depthZone} (${season} range)</div>
