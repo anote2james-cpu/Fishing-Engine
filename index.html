@@ -2,10 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<div class="app-header">
-  <div class="app-title">Fishing Engine</div>
-  <div class="app-subtitle">Elite Pattern System</div>
-</div>
+
 <style>
 body{
  font-family:Inter,Segoe UI,Arial,sans-serif;
@@ -185,7 +182,10 @@ label{
 </style>
 </head>
 <body>
-
+<div class="app-header">
+  <div class="app-title">Fishing Engine</div>
+  <div class="app-subtitle">Elite Pattern System</div>
+</div>
 <div class="card">
 <h3>Fishing Engine Elite</h3>
 
@@ -391,9 +391,7 @@ function getSeason(t){
 
  if(t <= 75) return "Post-Spawn";
 
- if(t <= 82) return "Summer";
-
- return "Fall";
+ return "Summer";
 }
 
 function getColors(clarity){
@@ -1006,7 +1004,8 @@ function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
 function run(){
   let lake=document.getElementById("lake").value;
  let species=document.getElementById("species").value;
- let temp=parseFloat(document.getElementById("temp").value)||60;
+ let tempInput = document.getElementById("temp").value;
+let temp = parseFloat(tempInput) || 60;
  let clarity=document.getElementById("clarity").value;
  let wind=document.getElementById("wind").value;
  let structure=document.getElementById("structure").value;
@@ -1057,7 +1056,7 @@ colors = [...new Set(colors)];
  
 // INPUT COMPLETENESS
 if (species && species !== "Unknown") confidence += 10;
-if (temp) confidence += 10;
+if (tempInput) confidence += 10;
 
 if (wind && wind !== "Calm") confidence += 5;
 if(forage === "Goby" && species === "Smallmouth") confidence += 8;
