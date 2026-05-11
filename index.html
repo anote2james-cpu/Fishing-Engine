@@ -166,6 +166,22 @@ label{
  font-weight:700;
  margin-top:4px;
 } 
+.confidence-wrap{
+ margin-top:8px;
+ background:#07121b;
+ border:1px solid #1e3a4d;
+ border-radius:999px;
+ height:14px;
+ overflow:hidden;
+}
+
+.confidence-bar{
+ height:100%;
+ background:#38bdf8;
+ border-radius:999px;
+ box-shadow:0 0 16px rgba(56,189,248,.45);
+}  
+  
 </style>
 </head>
 <body>
@@ -1123,8 +1139,10 @@ let quickOutput = `
 <div class="result-card">
   <div class="muted">CONFIDENCE</div>
   <div class="out">${confidence}%</div>
+  <div class="confidence-wrap">
+    <div class="confidence-bar" style="width:${confidence}%"></div>
+  </div>
 </div>
-`;
 
 let detailedOutput = `
 <div class="result-card">
@@ -1204,8 +1222,10 @@ let detailedOutput = `
 <div class="result-card">
   <div class="muted">CONFIDENCE</div>
   <div class="out">${confidence}%</div>
+  <div class="confidence-wrap">
+    <div class="confidence-bar" style="width:${confidence}%"></div>
+  </div>
 </div>
-`;
 
 document.getElementById("out").innerHTML =
   viewMode === "Quick" ? quickOutput : detailedOutput;
