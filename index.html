@@ -1255,14 +1255,18 @@ if(time === "Morning" || time === "Evening"){
 }
 lures = adjustLuresForStructure(lures, structure);
 
-lures = lures
+let scoredLures = lures
   .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
     name: lure,
     score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time)
   }))
-  .sort((a, b) => b.score - a.score)
-  .map(item => item.name);
+  .sort((a, b) => b.score - a.score);
+
+let survivingLureCount = scoredLures.length;
+let topLureScore = scoredLures.length ? scoredLures[0].score : 50;
+
+lures = scoredLures.map(item => item.name);
 
 if(lures.length < 3){
   lures = lures.concat(["Jig", "Swimbait", "Crankbait"]);
@@ -1297,7 +1301,16 @@ if(forage === "Shad" && (structure === "Open Water" || structure === "Flats")) c
 if(structure === "Weedlines" && species === "Largemouth") confidence += 6;
 if(structure === "Docks" && species === "Largemouth") confidence += 5;
 if(structure === "Open Water" && species === "Smallmouth") confidence += 5;
+ 
+// LURE QUALITY
+if(topLureScore >= 85) confidence += 8;
+else if(topLureScore >= 75) confidence += 5;
+else if(topLureScore >= 65) confidence += 2;
+else confidence -= 5;
 
+if(survivingLureCount >= 5) confidence += 4;
+if(survivingLureCount <= 2) confidence -= 8;
+ 
 // CONDITION QUALITY
 if (pressure === "Falling") confidence += 5;
 if (cloud === "Overcast" || cloud === "Rainy") confidence += 5;
@@ -1343,6 +1356,7 @@ let quickOutput = `
   <div class="small">${lures[0]}</div>
   <div class="small">Retrieve: ${retrieve}</div>
   <div class="small">Colors: ${colors.join(" • ")}</div>
+  <div class="small">Lure Fit Score: ${topLureScore}%</div>
 </div>
 
 <div class="grid-2">
@@ -1439,6 +1453,7 @@ let detailedOutput = `
   <img src="${getImage(lures[0].split(' (')[0])}">
   <div class="small">${lures[0]}</div>
   <div class="small">Retrieve: ${retrieve}</div>
+  <div class="small">Lure Fit Score: ${topLureScore}%</div>
 </div>
 
 <div class="grid-2">
