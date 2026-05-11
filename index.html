@@ -876,8 +876,10 @@ function scoreLure(lure, season, species, structure, forage, wind, clarity, pres
  }
 
  if(structure === "Points" || structure === "Drop-offs"){
-   if(clean.includes("football") || clean.includes("tube") || clean.includes("ned") || clean.includes("crankbait")) score += 12;
- }
+   if(clean.includes("football")) score += 18;
+   if(clean.includes("tube") || clean.includes("ned")) score += 12;
+   if(clean.includes("crankbait")) score += 8;
+}
 
  if(structure === "Docks" || structure === "Timber"){
    if(clean.includes("flipping") || clean.includes("texas") || clean.includes("jig")) score += 12;
@@ -895,9 +897,10 @@ function scoreLure(lure, season, species, structure, forage, wind, clarity, pres
  }
 
  if(forage === "Crawfish" || forage === "Goby"){
-   if(clean.includes("jig") || clean.includes("ned") || clean.includes("tube") || clean.includes("texas")) score += 12;
+   if(clean.includes("jig") || clean.includes("ned") || clean.includes("tube") || clean.includes("texas")) score += 16;
+   if(clean.includes("football")) score += 8;
    if(clean.includes("topwater")) score -= 8;
- }
+}
 
  if(forage === "Bluegill" || forage === "Shiners"){
    if(clean.includes("jig") || clean.includes("swimbait") || clean.includes("topwater") || clean.includes("spinnerbait")) score += 8;
