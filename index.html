@@ -1143,7 +1143,7 @@ let quickOutput = `
     <div class="confidence-bar" style="width:${confidence}%"></div>
   </div>
 </div>
-
+`;
 let detailedOutput = `
 <div class="result-card">
   <div class="muted">🎯 TARGET</div>
@@ -1226,7 +1226,7 @@ let detailedOutput = `
     <div class="confidence-bar" style="width:${confidence}%"></div>
   </div>
 </div>
-
+`;
 document.getElementById("out").innerHTML =
   viewMode === "Quick" ? quickOutput : detailedOutput;
 }
