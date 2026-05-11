@@ -836,6 +836,114 @@ if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible ba
 
  return getRetrieve(season, species);
 } 
+function scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time){
+
+ let score = 50;
+ let clean = lure.toLowerCase();
+
+ // SEASON
+ if(season === "Winter"){
+   if(clean.includes("ned") || clean.includes("tube") || clean.includes("jig")) score += 12;
+   if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait")) score -= 18;
+ }
+
+ if(season === "Pre-Spawn"){
+   if(clean.includes("jerkbait") || clean.includes("jig") || clean.includes("crankbait")) score += 10;
+ }
+
+ if(season === "Spawn"){
+   if(clean.includes("texas") || clean.includes("jig") || clean.includes("tube")) score += 10;
+   if(clean.includes("swimbait") || clean.includes("crankbait")) score -= 4;
+ }
+
+ if(season === "Post-Spawn"){
+   if(clean.includes("topwater") || clean.includes("swimbait") || clean.includes("jig")) score += 8;
+ }
+
+ if(season === "Summer"){
+   if(clean.includes("jig") || clean.includes("texas") || clean.includes("swimbait") || clean.includes("crankbait")) score += 8;
+ }
+
+ if(season === "Fall"){
+   if(clean.includes("swimbait") || clean.includes("crankbait") || clean.includes("spinnerbait") || clean.includes("jerkbait")) score += 12;
+   if(clean.includes("carolina")) score -= 4;
+ }
+
+ // STRUCTURE
+ if(structure === "Weedlines"){
+   if(clean.includes("swim jig") || clean.includes("weedless") || clean.includes("texas") || clean.includes("chatterbait")) score += 12;
+   if(clean.includes("treble") || clean.includes("crankbait")) score -= 8;
+ }
+
+ if(structure === "Points" || structure === "Drop-offs"){
+   if(clean.includes("football") || clean.includes("tube") || clean.includes("ned") || clean.includes("crankbait")) score += 12;
+ }
+
+ if(structure === "Docks" || structure === "Timber"){
+   if(clean.includes("flipping") || clean.includes("texas") || clean.includes("jig")) score += 12;
+   if(clean.includes("crankbait")) score -= 5;
+ }
+
+ if(structure === "Open Water"){
+   if(clean.includes("swimbait") || clean.includes("jerkbait") || clean.includes("minnow")) score += 14;
+   if(clean.includes("flipping") || clean.includes("texas")) score -= 10;
+ }
+
+ // FORAGE
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   if(clean.includes("swimbait") || clean.includes("jerkbait") || clean.includes("crankbait") || clean.includes("spinnerbait")) score += 10;
+ }
+
+ if(forage === "Crawfish" || forage === "Goby"){
+   if(clean.includes("jig") || clean.includes("ned") || clean.includes("tube") || clean.includes("texas")) score += 12;
+   if(clean.includes("topwater")) score -= 8;
+ }
+
+ if(forage === "Bluegill" || forage === "Shiners"){
+   if(clean.includes("jig") || clean.includes("swimbait") || clean.includes("topwater") || clean.includes("spinnerbait")) score += 8;
+ }
+
+ // CONDITIONS
+ if(wind !== "Calm"){
+   if(clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait")) score += 8;
+ }
+
+ if(wind === "Calm"){
+   if(clean.includes("ned") || clean.includes("tube") || clean.includes("texas") || clean.includes("jig")) score += 6;
+   if(clean.includes("spinnerbait") || clean.includes("chatterbait")) score -= 6;
+ }
+
+ if(clarity === "Dirty"){
+   if(clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("jig") || clean.includes("crankbait")) score += 8;
+   if(clean.includes("jerkbait") || clean.includes("ned")) score -= 4;
+ }
+
+ if(clarity === "Clear"){
+   if(clean.includes("ned") || clean.includes("tube") || clean.includes("jerkbait") || clean.includes("swimbait")) score += 8;
+ }
+
+ if(pressure === "Rising"){
+   if(clean.includes("ned") || clean.includes("tube") || clean.includes("texas") || clean.includes("jig")) score += 8;
+   if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait")) score -= 8;
+ }
+
+ if(pressure === "Falling" || cloud === "Overcast" || cloud === "Rainy"){
+   if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait")) score += 8;
+ }
+
+ // TIME
+ if(time === "Morning" || time === "Evening"){
+   if(clean.includes("topwater") || clean.includes("swimbait") || clean.includes("spinnerbait")) score += 8;
+ }
+
+ if(time === "Midday"){
+   if(clean.includes("texas") || clean.includes("jig") || clean.includes("ned") || clean.includes("tube")) score += 6;
+ }
+
+ score = Math.max(1, Math.min(100, score));
+
+ return score;
+} 
 function getLureRole(index, lure, mood){
 
  if(index === 0){
@@ -1098,6 +1206,15 @@ if(time === "Morning" || time === "Evening"){
   }
 }
 lures = adjustLuresForStructure(lures, structure);
+
+lures = lures
+  .map(lure => ({
+    name: lure,
+    score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time)
+  }))
+  .sort((a, b) => b.score - a.score)
+  .map(item => item.name);
+
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
   let retrieve = getRetrieveByLure(lures[0], season, species);
