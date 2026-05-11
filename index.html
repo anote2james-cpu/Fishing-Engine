@@ -178,7 +178,21 @@ label{
  border-radius:999px;
  box-shadow:0 0 16px rgba(56,189,248,.45);
 }  
-  
+.stability-wrap{
+ margin-top:8px;
+ background:#07121b;
+ border:1px solid #1e3a4d;
+ border-radius:999px;
+ height:14px;
+ overflow:hidden;
+}
+
+.stability-bar{
+ height:100%;
+ background:#22c55e;
+ border-radius:999px;
+ box-shadow:0 0 16px rgba(34,197,94,.45);
+}  
 </style>
 </head>
 <body>
@@ -892,6 +906,51 @@ function getAvoidPatterns(species, season, structure, time, pressure, cloud, win
 
  return avoids;
 }
+function getPatternStability(season, pressure, wind, cloud, forage, structure){
+
+ let score = 50;
+
+ // Stable seasons/patterns
+ if(season === "Summer") score += 8;
+ if(season === "Winter") score += 6;
+
+ // More movement/searching seasons
+ if(season === "Fall") score -= 10;
+ if(season === "Pre-Spawn") score -= 4;
+
+ // Weather influence
+ if(pressure === "Stable") score += 12;
+ if(pressure === "Falling") score -= 4;
+ if(pressure === "Rising") score -= 8;
+
+ if(wind === "Calm" || wind === "Light") score += 5;
+ if(wind === "Heavy") score -= 10;
+
+ if(cloud === "Sunny" || cloud === "Partly Cloudy") score += 4;
+ if(cloud === "Rainy") score -= 6;
+
+ // Forage influence
+ if(forage === "Crawfish" || forage === "Goby") score += 8;
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring") score -= 8;
+
+ // Structure influence
+ if(structure === "Docks" || structure === "Timber" || structure === "Drop-offs") score += 7;
+ if(structure === "Open Water" || structure === "Flats") score -= 8;
+
+ score = Math.max(20, Math.min(95, score));
+
+ let label = "Moderate";
+
+ if(score >= 75) label = "Stable";
+ else if(score >= 55) label = "Moderate";
+ else if(score >= 40) label = "Unstable";
+ else label = "Search Pattern";
+
+ return {
+   score: score,
+   label: label
+ };
+} 
 function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
 
  let style = "Balanced approach";
@@ -1051,6 +1110,7 @@ let colors = [
 // remove duplicates
 colors = [...new Set(colors)];
  let avoidText = avoidPatterns.map(item => `<div class="small">• ${item}</div>`).join(""); 
+ let stability = getPatternStability(season, pressure, wind, cloud, forage, structure);
  let confidence = 45;
 
  
@@ -1142,6 +1202,18 @@ let quickOutput = `
     <div class="confidence-bar" style="width:${confidence}%"></div>
   </div>
 </div>
+<div class="result-card">
+  <div class="muted">PATTERN STABILITY</div>
+  <div class="out">${stability.label}</div>
+
+  <div class="stability-wrap">
+    <div class="stability-bar" style="width:${stability.score}%"></div>
+  </div>
+
+  <div class="small">
+    Stability Score: ${stability.score}%
+  </div>
+</div>
 `;
 let detailedOutput = `
 <div class="result-card">
@@ -1223,6 +1295,18 @@ let detailedOutput = `
   <div class="out">${confidence}%</div>
   <div class="confidence-wrap">
     <div class="confidence-bar" style="width:${confidence}%"></div>
+  </div>
+</div>
+<div class="result-card">
+  <div class="muted">PATTERN STABILITY</div>
+  <div class="out">${stability.label}</div>
+
+  <div class="stability-wrap">
+    <div class="stability-bar" style="width:${stability.score}%"></div>
+  </div>
+
+  <div class="small">
+    Stability Score: ${stability.score}%
   </div>
 </div>
 `;
