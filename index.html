@@ -835,6 +835,51 @@ if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible ba
  if(clean.includes("minnow")) return "Slow hover or lift-drop presentation";
 
  return getRetrieve(season, species);
+}
+function shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time){
+
+ let clean = lure.toLowerCase();
+
+ // COLD WATER ELIMINATIONS
+ if(season === "Winter"){
+   if(clean.includes("topwater")) return true;
+   if(clean.includes("buzzbait")) return true;
+ }
+
+ // OPEN WATER MISMATCHES
+ if(structure === "Open Water"){
+   if(clean.includes("flipping")) return true;
+   if(clean.includes("texas")) return true;
+   if(clean.includes("football")) return true;
+ }
+
+ // GRASS / WEEDLINE MISMATCHES
+ if(structure === "Weedlines"){
+   if(clean.includes("football")) return true;
+ }
+
+ // SPECIES-SPECIFIC MISMATCHES
+ if(species === "Smallmouth" && structure === "Weedlines"){
+   if(clean.includes("flipping")) return true;
+ }
+
+ if(species === "Walleye"){
+   if(clean.includes("topwater")) return true;
+ }
+
+ if(species === "Crappie"){
+   if(clean.includes("topwater")) return true;
+   if(clean.includes("chatterbait")) return true;
+   if(clean.includes("spinnerbait")) return true;
+ }
+
+ // CALM CLEAR TOUGH CONDITIONS
+ if(wind === "Calm" && clarity === "Clear" && pressure === "Rising" && time === "Midday"){
+   if(clean.includes("spinnerbait")) return true;
+   if(clean.includes("chatterbait")) return true;
+ }
+
+ return false;
 } 
 function scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time){
 
@@ -1211,12 +1256,19 @@ if(time === "Morning" || time === "Evening"){
 lures = adjustLuresForStructure(lures, structure);
 
 lures = lures
+  .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
     name: lure,
     score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time)
   }))
   .sort((a, b) => b.score - a.score)
   .map(item => item.name);
+
+if(lures.length < 3){
+  lures = lures.concat(["Jig", "Swimbait", "Crankbait"]);
+}
+
+lures = [...new Set(lures)];
 
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
