@@ -754,6 +754,8 @@ if (clean.includes("jerkbait")) return "images/jerkbait.jpg";
 if (clean.includes("crankbait")) return "images/crankbait.jpg";
 if (clean.includes("topwater")) return "images/topwater.jpg";
 if (clean.includes("texas rig")) return "images/texas-rig.jpg";
+if (clean.includes("spinnerbait")) return "images/spinnerbait.jpg";
+if (clean.includes("chatterbait")) return "images/chatterbait.jpg"; 
 if (clean.includes("paddle tail swimbait")) return "images/swimbait.jpg";
 if (clean.includes("swimbait")) return "images/swimbait.jpg";
 
@@ -1253,6 +1255,7 @@ if(time === "Morning" || time === "Evening"){
     lures.unshift("Topwater");
   }
 }
+lures = [...new Set(lures)]; 
 lures = adjustLuresForStructure(lures, structure);
 
 let scoredLures = lures
