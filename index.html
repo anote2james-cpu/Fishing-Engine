@@ -443,6 +443,65 @@ function getColors(clarity){
  ];
 }
 
+function getAggressionIndex(species, season, temp, pressure, cloud, wind, time, clarity){
+
+ let score = 50;
+
+ // Temperature / season metabolism
+ if(season === "Winter") score -= 18;
+ if(season === "Pre-Spawn") score += 6;
+ if(season === "Spawn") score -= 4;
+ if(season === "Post-Spawn") score += 4;
+ if(season === "Summer") score += 6;
+
+ // Pressure
+ if(pressure === "Falling") score += 14;
+ if(pressure === "Stable") score += 4;
+ if(pressure === "Rising") score -= 14;
+
+ // Sky / light
+ if(cloud === "Overcast") score += 8;
+ if(cloud === "Rainy") score += 10;
+ if(cloud === "Sunny") score -= 5;
+
+ // Wind
+ if(wind === "Light") score += 4;
+ if(wind === "Moderate") score += 8;
+ if(wind === "Heavy") score -= 6;
+ if(wind === "Calm") score -= 6;
+
+ // Time of day
+ if(time === "Morning" || time === "Evening") score += 8;
+ if(time === "Midday") score -= 4;
+ if(time === "Night"){
+   if(species === "Walleye") score += 10;
+   else score -= 2;
+ }
+
+ // Clarity
+ if(clarity === "Stained") score += 4;
+ if(clarity === "Dirty") score -= 2;
+ if(clarity === "Clear" && cloud === "Sunny") score -= 6;
+
+ // Species behavior tuning
+ if(species === "Smallmouth") score += 4;
+ if(species === "Walleye" && (time === "Morning" || time === "Evening" || time === "Night")) score += 6;
+ if(species === "Crappie") score -= 4;
+
+ score = Math.max(5, Math.min(95, score));
+
+ let label = "Neutral";
+
+ if(score >= 75) label = "High";
+ else if(score >= 55) label = "Moderate";
+ else if(score >= 35) label = "Low";
+ else label = "Negative";
+
+ return {
+   score: score,
+   label: label
+ };
+} 
 function getMood(pressure, cloud){
 
  if(pressure==="Falling") return "Aggressive";
@@ -887,7 +946,7 @@ function shouldEliminateLure(lure, season, species, structure, forage, wind, cla
 
  return false;
 } 
-function scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time){
+function scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression){
 
  let score = 50;
  let clean = lure.toLowerCase();
@@ -993,7 +1052,25 @@ function scoreLure(lure, season, species, structure, forage, wind, clarity, pres
  if(time === "Midday"){
    if(clean.includes("texas") || clean.includes("jig") || clean.includes("ned") || clean.includes("tube")) score += 6;
  }
+// AGGRESSION INDEX
+if(aggression.label === "High"){
+  if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait")) score += 12;
+  if(clean.includes("ned") || clean.includes("tube")) score -= 4;
+}
 
+if(aggression.label === "Moderate"){
+  if(clean.includes("swimbait") || clean.includes("crankbait") || clean.includes("jig")) score += 6;
+}
+
+if(aggression.label === "Low"){
+  if(clean.includes("jig") || clean.includes("texas") || clean.includes("tube") || clean.includes("ned")) score += 10;
+  if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait")) score -= 8;
+}
+
+if(aggression.label === "Negative"){
+  if(clean.includes("ned") || clean.includes("tube") || clean.includes("jig") || clean.includes("texas")) score += 14;
+  if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait")) score -= 14;
+}
  score = Math.max(1, Math.min(100, score));
 
  return score;
@@ -1249,6 +1326,7 @@ if(structure==="Weedlines" && season!=="Winter"){
  depthZone = "3–10 ft";
 }
 let mood = getMood(pressure, cloud);
+let aggression = getAggressionIndex(species, season, temp, pressure, cloud, wind, time, clarity); 
 let fishingStyle = getFishingStyle(mood, pressure, cloud, wind, season, clarity);  
 let mapGuidance = getMapSearchGuidance(lakeType, season, species, structure, forage); 
 let avoidPatterns = getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage);
@@ -1266,7 +1344,7 @@ let scoredLures = lures
   .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
     name: lure,
-    score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time)
+   score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression)
   }))
   .sort((a, b) => b.score - a.score);
 
@@ -1379,6 +1457,11 @@ let quickOutput = `
 </div>
 
 <div class="result-card">
+  <div class="muted">⚡ AGGRESSION INDEX</div>
+  <div class="out">${aggression.label}</div>
+  <div class="small">Aggression Score: ${aggression.score}%</div>
+</div>
+<div class="result-card">
   <div class="muted">🔥 STYLE</div>
   <div class="small">${fishingStyle}</div>
 </div>
@@ -1438,6 +1521,11 @@ let detailedOutput = `
   <div class="small">${feedingWindow}</div>
 </div>
 
+<div class="result-card">
+  <div class="muted">⚡ AGGRESSION INDEX</div>
+  <div class="out">${aggression.label}</div>
+  <div class="small">Aggression Score: ${aggression.score}%</div>
+</div>
 <div class="result-card">
   <div class="muted">🔥 FISHING STYLE</div>
   <div class="small">${fishingStyle}</div>
