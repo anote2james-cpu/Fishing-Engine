@@ -162,6 +162,29 @@ padding:14px;
  background:#38bdf8;
  border-radius:999px;
 }
+ .status-grid{
+ display:grid;
+ grid-template-columns:1fr;
+ gap:10px;
+ margin-top:10px;
+}
+
+.status-item{
+ background:#07121b;
+ border:1px solid #1e3a4d;
+ border-radius:14px;
+ padding:10px;
+}
+
+.status-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ font-size:12px;
+ font-weight:800;
+ color:#cbd5e1;
+ margin-bottom:6px;
+}
 .muted{
  color:#9fb3c8;
  font-size:13px;
@@ -1649,19 +1672,41 @@ let detailedOutput = `
 
   <div class="muted">ENGINE STATUS</div>
 
-  <div class="chip-row">
-    <div class="chip">
-      ⚡ ${aggression.label}
+  <div class="status-grid">
+
+    <div class="status-item">
+      <div class="status-top">
+        <span>⚡ Aggression</span>
+        <span>${aggression.label} / ${aggression.score}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${aggression.score}%"></div>
+      </div>
     </div>
 
-    <div class="chip">
-      🎯 ${confidence}%
+    <div class="status-item">
+      <div class="status-top">
+        <span>🎯 Confidence</span>
+        <span>${confidence}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${confidence}%"></div>
+      </div>
     </div>
 
-    <div class="chip">
-      📈 ${stability.label}
+    <div class="status-item">
+      <div class="status-top">
+        <span>📈 Stability</span>
+        <span>${stability.label} / ${stability.score}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${stability.score}%"></div>
+      </div>
     </div>
+
   </div>
+
+</div>
 
   <div class="small" style="margin-top:10px;">
     Aggression / Confidence / Stability
