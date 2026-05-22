@@ -1227,7 +1227,64 @@ function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
  }
 
  return style;
-}  
+}
+ function getElectronicsGuidance(species, season, structure, forage, aggression, stability, depthZone){
+
+ let guidance = [];
+
+ if(structure === "Open Water"){
+   guidance.push("Idle first. Do not start casting until you see bait, fish, or clear activity on electronics.");
+   guidance.push("Use side scan to locate bait schools, suspended fish, or hard-bottom transitions.");
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   guidance.push("Bait is the priority. If you do not see bait, do not stay long.");
+ }
+
+ if(forage === "Goby" || forage === "Crawfish"){
+   guidance.push("Focus electronics on bottom composition: rock, gravel, shell, hard spots, and transitions.");
+ }
+
+ if(structure === "Points" || structure === "Drop-offs"){
+   guidance.push("Scan the tip, sides, and base of the structure before fishing it.");
+ }
+
+ if(structure === "Weedlines"){
+   guidance.push("Look for irregular grass: holes, points, inside turns, outside edges, and cleaner lanes.");
+ }
+
+ if(structure === "Docks" || structure === "Timber"){
+   guidance.push("Use visible cover first, then check nearby depth changes, shade lines, and bait presence.");
+ }
+
+ if(aggression.label === "High"){
+   guidance.push("Fish are likely more willing to chase. Cover water quickly and do not overwork dead areas.");
+ }
+
+ if(aggression.label === "Low" || aggression.label === "Negative"){
+   guidance.push("Fish are likely tighter to cover or bottom. Slow down when you find a high-percentage target.");
+ }
+
+ if(stability.label === "Stable"){
+   guidance.push("Pattern is repeatable. Once you get bit, duplicate the same structure, depth, and cover.");
+ }
+
+ if(stability.label === "Unstable" || stability.label === "Search Pattern"){
+   guidance.push("Pattern may move. Keep searching for fresh bait, wind, current, or activity.");
+ }
+
+ if(season === "Winter"){
+   guidance.push("Expect tighter groups. Spend more time graphing and less time blind casting.");
+ }
+
+ if(season === "Summer"){
+   guidance.push("Check thermocline depth, offshore structure, shade, current, and bait before committing.");
+ }
+
+ guidance.push("Starting search depth: " + depthZone + ".");
+
+ return guidance;
+}
  function getMapSearchGuidance(lakeType, season, species, structure, forage){
 
  let guidance = "";
@@ -1327,8 +1384,10 @@ if(structure==="Weedlines" && season!=="Winter"){
 }
 let mood = getMood(pressure, cloud);
 let aggression = getAggressionIndex(species, season, temp, pressure, cloud, wind, time, clarity); 
+let stability = getPatternStability(season, pressure, wind, cloud, forage, structure); 
 let fishingStyle = getFishingStyle(mood, pressure, cloud, wind, season, clarity);  
-let mapGuidance = getMapSearchGuidance(lakeType, season, species, structure, forage); 
+let mapGuidance = getMapSearchGuidance(lakeType, season, species, structure, forage);
+let electronicsGuidance = getElectronicsGuidance(species, season, structure, forage, aggression, stability, depthZone); 
 let avoidPatterns = getAvoidPatterns(species, season, structure, time, pressure, cloud, wind, forage);
 
 let lures=getLures(species);
@@ -1371,7 +1430,9 @@ let colors = [
 // remove duplicates
 colors = [...new Set(colors)];
  let avoidText = avoidPatterns.map(item => `<div class="small">• ${item}</div>`).join(""); 
- let stability = getPatternStability(season, pressure, wind, cloud, forage, structure);
+ let electronicsText = electronicsGuidance
+  .map(item => `<div class="small">• ${item}</div>`)
+  .join("");
  let confidence = 45;
 
  
@@ -1535,7 +1596,10 @@ let detailedOutput = `
   <div class="muted">🗺️ MAP SEARCH</div>
   <div class="small">${mapGuidance}</div>
 </div>
-
+<div class="result-card">
+  <div class="muted">📡 ELECTRONICS / SEARCH STRATEGY</div>
+  ${electronicsText}
+</div>
 <div class="result-card">
   <div class="muted">⚠️ AVOID</div>
   ${avoidText}
