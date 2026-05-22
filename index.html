@@ -1480,10 +1480,12 @@ let topLureScore = scoredLures.length ? scoredLures[0].score : 50;
 lures = scoredLures.map(item => item.name);
 
 if(lures.length < 3){
-  lures = lures.concat(["Jig", "Swimbait", "Crankbait"]);
-}
 
-lures = [...new Set(lures)];
+  lures = [...new Set(
+    lures.concat(["Jig", "Swimbait", "Crankbait"])
+  )];
+
+}
 
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
