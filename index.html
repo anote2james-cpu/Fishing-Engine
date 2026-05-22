@@ -130,6 +130,37 @@ label{
  gap:10px;
 }
 
+ .chip-row{
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px;
+ margin-top:10px;
+}
+
+.chip{
+ background:#07121b;
+ border:1px solid #244b63;
+ border-radius:999px;
+ padding:7px 10px;
+ font-size:12px;
+ font-weight:800;
+ color:#cbd5e1;
+}
+
+.mini-meter{
+ margin-top:8px;
+ background:#07121b;
+ border:1px solid #1e3a4d;
+ border-radius:999px;
+ height:8px;
+ overflow:hidden;
+}
+
+.mini-meter-bar{
+ height:100%;
+ background:#38bdf8;
+ border-radius:999px;
+}
 .muted{
  color:#9fb3c8;
  font-size:13px;
@@ -1490,19 +1521,36 @@ let quickOutput = `
 </div>
 
 <div class="result-card">
-  <div class="muted">📍 WHERE TO START</div>
-  <div class="small">${location}</div>
-  <div class="small">Depth: ${depthZone}</div>
+  <div class="muted">📍 QUICK POSITIONING</div>
+
+  <div class="chip-row">
+    <div class="chip">${season}</div>
+    <div class="chip">${structure}</div>
+    <div class="chip">${depthZone}</div>
+  </div>
+
+  <div class="small" style="margin-top:10px;">
+    ${location}
+  </div>
 </div>
 
 <div class="hero-bait">
   <div class="badge">PRIMARY BAIT</div>
-  <div class="hero-title">${lures[0].split(" (")[0]}</div>
+
+  <div class="hero-title">
+    ${lures[0].split(" (")[0]}
+  </div>
+
   <img src="${getImage(lures[0].split(' (')[0])}">
-  <div class="small">${lures[0]}</div>
-  <div class="small">Retrieve: ${retrieve}</div>
-  <div class="small">Colors: ${colors.join(" • ")}</div>
-  <div class="small">Lure Fit Score: ${topLureScore}%</div>
+
+  <div class="chip-row">
+    <div class="chip">${retrieve}</div>
+    <div class="chip">${topLureScore}% Fit</div>
+  </div>
+
+  <div class="small" style="margin-top:10px;">
+    ${colors.slice(0,3).join(" • ")}
+  </div>
 </div>
 
 <div class="grid-2">
@@ -1517,11 +1565,8 @@ let quickOutput = `
   </div>
 </div>
 
-<div class="result-card">
-  <div class="muted">⚡ AGGRESSION INDEX</div>
-  <div class="out">${aggression.label}</div>
-  <div class="small">Aggression Score: ${aggression.score}%</div>
-</div>
+
+
 <div class="result-card">
   <div class="muted">🔥 STYLE</div>
   <div class="small">${fishingStyle}</div>
@@ -1532,25 +1577,9 @@ let quickOutput = `
   <div class="small">${avoidPatterns[0]}</div>
 </div>
 
-<div class="result-card">
-  <div class="muted">CONFIDENCE</div>
-  <div class="out">${confidence}%</div>
-  <div class="confidence-wrap">
-    <div class="confidence-bar" style="width:${confidence}%"></div>
-  </div>
-</div>
-<div class="result-card">
-  <div class="muted">PATTERN STABILITY</div>
-  <div class="out">${stability.label}</div>
 
-  <div class="stability-wrap">
-    <div class="stability-bar" style="width:${stability.score}%"></div>
-  </div>
 
-  <div class="small">
-    Stability Score: ${stability.score}%
-  </div>
-</div>
+
 `;
 let detailedOutput = `
 <div class="result-card">
@@ -1613,6 +1642,34 @@ let detailedOutput = `
   <div class="small">${lures[0]}</div>
   <div class="small">Retrieve: ${retrieve}</div>
   <div class="small">Lure Fit Score: ${topLureScore}%</div>
+</div>
+
+<div class="result-card">
+
+  <div class="muted">ENGINE STATUS</div>
+
+  <div class="chip-row">
+    <div class="chip">
+      ⚡ ${aggression.label}
+    </div>
+
+    <div class="chip">
+      🎯 ${confidence}%
+    </div>
+
+    <div class="chip">
+      📈 ${stability.label}
+    </div>
+  </div>
+
+  <div class="small" style="margin-top:10px;">
+    Aggression / Confidence / Stability
+  </div>
+
+  <div class="mini-meter">
+    <div class="mini-meter-bar" style="width:${confidence}%"></div>
+  </div>
+
 </div>
 
 <div class="grid-2">
