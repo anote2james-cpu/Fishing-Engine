@@ -587,6 +587,57 @@ function getRetrieve(season,species){
  return "Fast aggressive retrieve";
 }
 
+function getAdaptiveRetrieve(lure, baseRetrieve, season, pressure, wind, clarity, aggression, stability){
+
+ let retrieve = baseRetrieve;
+
+ if(aggression.label === "High"){
+   retrieve += " — speed it up, cover water, and trigger reaction bites.";
+ }
+
+ if(aggression.label === "Moderate"){
+   retrieve += " — use a steady cadence with occasional pauses or direction changes.";
+ }
+
+ if(aggression.label === "Low"){
+   retrieve += " — slow down, make precise casts, and add longer pauses.";
+ }
+
+ if(aggression.label === "Negative"){
+   retrieve += " — dead slow. Let the bait sit longer and avoid overworking it.";
+ }
+
+ if(season === "Winter"){
+   retrieve += " Cold water adjustment: use the slowest version of this retrieve.";
+ }
+
+ if(pressure === "Rising"){
+   retrieve += " Rising pressure adjustment: keep it closer to cover or bottom.";
+ }
+
+ if(wind !== "Calm" && aggression.label !== "Negative"){
+   retrieve += " Wind adjustment: use the wind to help create reaction strikes.";
+ }
+
+ if(clarity === "Clear"){
+   retrieve += " Clear water adjustment: make longer casts and keep the bait natural.";
+ }
+
+ if(clarity === "Dirty"){
+   retrieve += " Dirty water adjustment: use stronger vibration, contrast, or a bigger profile.";
+ }
+
+ if(stability.label === "Search Pattern"){
+   retrieve += " Search adjustment: do not overwork dead water; keep moving until you contact fish.";
+ }
+
+ if(stability.label === "Stable"){
+   retrieve += " Stable pattern adjustment: duplicate the same cast angle, depth, and cadence after a bite.";
+ }
+
+ return retrieve;
+}
+ 
 function getLocation(species,season,structure,wind,forage){
  let loc="";
 
@@ -1489,7 +1540,18 @@ if(lures.length < 3){
 
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
-  let retrieve = getRetrieveByLure(lures[0], season, species);
+let baseRetrieve = getRetrieveByLure(lures[0], season, species);
+
+let retrieve = getAdaptiveRetrieve(
+  lures[0],
+  baseRetrieve,
+  season,
+  pressure,
+  wind,
+  clarity,
+  aggression,
+  stability
+);
 let colors = [
   ...matchColorsToLure(lures[0], clarity, forage),
   ...matchColorsToLure(lures[1], clarity, forage),
