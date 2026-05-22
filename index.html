@@ -1782,25 +1782,8 @@ let detailedOutput = `
   <div class="small">${colors.join(" • ")}</div>
 </div>
 
-<div class="result-card">
-  <div class="muted">CONFIDENCE</div>
-  <div class="out">${confidence}%</div>
-  <div class="confidence-wrap">
-    <div class="confidence-bar" style="width:${confidence}%"></div>
-  </div>
-</div>
-<div class="result-card">
-  <div class="muted">PATTERN STABILITY</div>
-  <div class="out">${stability.label}</div>
 
-  <div class="stability-wrap">
-    <div class="stability-bar" style="width:${stability.score}%"></div>
-  </div>
 
-  <div class="small">
-    Stability Score: ${stability.score}%
-  </div>
-</div>
 `;
 document.getElementById("out").innerHTML =
   viewMode === "Quick" ? quickOutput : detailedOutput;
