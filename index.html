@@ -464,7 +464,9 @@ function getSeason(t){
 
  if(t <= 75) return "Post-Spawn";
 
- return "Summer";
+ if(t <= 82) return "Summer";
+
+ return "Fall";
 }
 
 function getColors(clarity){
@@ -1586,7 +1588,45 @@ let quickOutput = `
     ${colors.slice(0,3).join(" • ")}
   </div>
 </div>
+<div class="result-card">
 
+  <div class="muted">ENGINE STATUS</div>
+
+  <div class="status-grid">
+
+    <div class="status-item">
+      <div class="status-top">
+        <span>⚡ Aggression</span>
+        <span>${aggression.label} / ${aggression.score}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${aggression.score}%; background:${aggressionColor};"></div>
+      </div>
+    </div>
+
+    <div class="status-item">
+      <div class="status-top">
+        <span>🎯 Confidence</span>
+        <span>${confidence}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${confidence}%; background:${confidenceColor};"></div>
+      </div>
+    </div>
+
+    <div class="status-item">
+      <div class="status-top">
+        <span>📈 Stability</span>
+        <span>${stability.label} / ${stability.score}%</span>
+      </div>
+      <div class="mini-meter">
+        <div class="mini-meter-bar" style="width:${stability.score}%; background:${stabilityColor};"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 <div class="grid-2">
   <div class="result-card">
     <div class="muted">SECONDARY</div>
