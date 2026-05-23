@@ -1011,6 +1011,76 @@ function refineCrankbaitType(lure, season, structure, depthZone, forage, aggress
 
  return "Medium Diving Crankbait";
 }
+
+ function getRecommendedWeight(lure, depthZone, wind, structure){
+
+ let clean = lure.toLowerCase();
+
+ // DEFAULT
+ let weight = "";
+
+ // VERY SHALLOW
+ if(depthZone.includes("2–6")){
+   weight = "1/4 oz";
+ }
+
+ // MID DEPTH
+ else if(depthZone.includes("3–10") || depthZone.includes("5–15")){
+   weight = "3/8 oz";
+ }
+
+ // DEEPER
+ else if(depthZone.includes("10–20") || depthZone.includes("15–30")){
+   weight = "1/2 oz";
+ }
+
+ // VERY DEEP
+ else if(depthZone.includes("20–40") || depthZone.includes("25–50")){
+   weight = "3/4 oz";
+ }
+
+ else{
+   weight = "3/8 oz";
+ }
+
+ // WIND ADJUSTMENTS
+ if(wind === "Heavy"){
+   if(weight === "1/4 oz") weight = "3/8 oz";
+   else if(weight === "3/8 oz") weight = "1/2 oz";
+   else if(weight === "1/2 oz") weight = "3/4 oz";
+ }
+
+ // LURE-SPECIFIC TUNING
+ if(clean.includes("ned")){
+   return "1/10–1/5 oz";
+ }
+
+ if(clean.includes("tube")){
+   return depthZone.includes("20") ? "3/8 oz" : "1/4 oz";
+ }
+
+ if(clean.includes("football jig")){
+   return depthZone.includes("20") ? "3/4 oz" : "1/2 oz";
+ }
+
+ if(clean.includes("flipping jig")){
+   return structure === "Heavy Cover" ? "3/4 oz" : "1/2 oz";
+ }
+
+ if(clean.includes("swimbait")){
+   return depthZone.includes("20") ? "1/2–3/4 oz" : "3/8 oz";
+ }
+
+ if(clean.includes("deep diving crankbait")){
+   return "5/8–3/4 oz";
+ }
+
+ if(clean.includes("squarebill")){
+   return "3/8 oz";
+ }
+
+ return weight;
+}
  
   function adjustLuresForStructure(lures, structure) {
 
@@ -1591,6 +1661,7 @@ if(lures.length < 3){
 
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
+let recommendedWeight = getRecommendedWeight(lures[0], depthZone, wind, structure); 
 let baseRetrieve = getRetrieveByLure(lures[0], season, species);
 
 let retrieve = getAdaptiveRetrieve(
@@ -1694,10 +1765,11 @@ let quickOutput = `
 
   <img src="${getImage(lures[0].split(' (')[0])}">
 
-  <div class="chip-row">
-    <div class="chip">${baseRetrieve}</div>
-    <div class="chip">${topLureScore}% Fit</div>
-  </div>
+ <div class="chip-row">
+  <div class="chip">${baseRetrieve}</div>
+  <div class="chip">${recommendedWeight}</div>
+  <div class="chip">${topLureScore}% Fit</div>
+</div>
 
   <div class="small" style="margin-top:10px;">
     ${colors.slice(0,3).join(" • ")}
@@ -1829,8 +1901,9 @@ let detailedOutput = `
   <div class="small">${getLureRole(0, lures[0], mood)}</div>
   <img src="${getImage(lures[0].split(' (')[0])}">
   <div class="small">${lures[0]}</div>
-  <div class="small">Retrieve: ${retrieve}</div>
-  <div class="small">Lure Fit Score: ${topLureScore}%</div>
+<div class="small">Recommended Weight: ${recommendedWeight}</div>
+<div class="small">Retrieve: ${retrieve}</div>
+<div class="small">Lure Fit Score: ${topLureScore}%</div>
 </div>
 
 <div class="result-card">
