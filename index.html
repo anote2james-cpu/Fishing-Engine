@@ -317,6 +317,20 @@ padding:14px;
 <option>Open Water</option>
 </select>
 
+<label>Bottom / Cover Type</label>
+<select id="composition">
+<option>Unknown</option>
+<option>Rock</option>
+<option>Gravel</option>
+<option>Sand</option>
+<option>Clay</option>
+<option>Shell</option>
+<option>Grass</option>
+<option>Wood</option>
+<option>Brush</option>
+<option>Mixed</option>
+</select> 
+
 <label>Forage</label>
 <select id="forage">
 <option>Shad</option>
@@ -367,8 +381,11 @@ padding:14px;
 <div id="out" class="card"></div>
 
 <script>
-function getDepthZone(species, season, structure, lakeType, forage, wind, cloud, time){
+function getDepthZone(species, season, structure, lakeType, forage, wind, cloud, time, composition){
 
+let hardBottom = composition === "Rock" || composition === "Gravel" || composition === "Shell";
+let softBottom = composition === "Sand" || composition === "Clay";
+let coverBottom = composition === "Grass" || composition === "Wood" || composition === "Brush";
   // OPEN WATER
   if (structure === "Open Water") {
     if (season === "Summer") return "15–30 ft suspended";
@@ -381,6 +398,10 @@ if (species === "Smallmouth") {
 
   // GREAT LAKES / ST CLAIR STYLE
   if(lakeType === "Great Lake" || lakeType === "Natural Smallmouth Flat Lake"){
+  if(hardBottom && forage === "Goby"){
+  if(season === "Summer") return "6–18 ft";
+  if(season === "Fall") return "5–15 ft";
+} 
 
     if(season === "Winter") return "20–40 ft";
 
@@ -1854,6 +1875,7 @@ let temp = parseFloat(tempInput) || 60;
  let clarity=document.getElementById("clarity").value;
  let wind=document.getElementById("wind").value;
  let structure=document.getElementById("structure").value;
+ let composition=document.getElementById("composition").value;
  let forage=document.getElementById("forage").value;
 let time=document.getElementById("time").value;
 let pressure = document.getElementById("pressure").value;
@@ -1875,7 +1897,8 @@ let depthZone = getDepthZone(
   forage,
   wind,
   cloud,
-  time
+  time,
+  composition
 );
 
 if(structure === "Weedlines" && season !== "Winter"){
