@@ -1964,7 +1964,7 @@ let cloud = document.getElementById("cloud").value;
  
  let location=getLocation(species,season,structure,wind,forage);
  if(largemouthStructurePosition){
-  location += " " + largemouthStructurePosition;
+ location += ". " + largemouthStructurePosition;
 }
 location = adjustLocationForLakeType(location, lakeType, season, species);
 let migration = getSeasonalMigration(season, species, lakeType);
