@@ -929,6 +929,11 @@ if (clean.includes("ned rig")) return "images/ned-rig.jpg";
 if (clean.includes("tube")) return "images/tube.jpg";
 
 if (clean.includes("jerkbait")) return "images/jerkbait.jpg";
+if (clean.includes("squarebill")) return "images/squarebill.jpg";
+if (clean.includes("medium diving crankbait")) return "images/medium-diving-crankbait.jpg";
+if (clean.includes("deep diving crankbait")) return "images/deep-diving-crankbait.jpg";
+if (clean.includes("lipless")) return "images/lipless-crankbait.jpg";
+if (clean.includes("flat-sided")) return "images/flat-sided-crankbait.jpg";
 if (clean.includes("crankbait")) return "images/crankbait.jpg";
 if (clean.includes("topwater")) return "images/topwater.jpg";
 if (clean.includes("texas rig")) return "images/texas-rig.jpg";
@@ -963,6 +968,50 @@ if (lure.includes("Topwater")) return `${lure} (over shallow cover or visible ba
 
   });
 }
+
+function refineCrankbaitType(lure, season, structure, depthZone, forage, aggression){
+
+ let clean = lure.toLowerCase();
+
+ if(!clean.includes("crankbait")){
+   return lure;
+ }
+
+ if(structure === "Docks" || structure === "Timber"){
+   return "Squarebill Crankbait";
+ }
+
+ if(structure === "Weedlines"){
+   return "Lipless Crankbait";
+ }
+
+ if(structure === "Open Water"){
+   return "Lipless Crankbait";
+ }
+
+ if(season === "Winter" || season === "Pre-Spawn"){
+   return "Flat-Sided Crankbait";
+ }
+
+ if(depthZone.includes("2–6") || depthZone.includes("3–10") || depthZone.includes("5–15")){
+   return "Squarebill Crankbait";
+ }
+
+ if(depthZone.includes("8–15") || depthZone.includes("10–20")){
+   return "Medium Diving Crankbait";
+ }
+
+ if(depthZone.includes("15–30") || depthZone.includes("20–40") || depthZone.includes("25–50")){
+   return "Deep Diving Crankbait";
+ }
+
+ if(forage === "Shad" && aggression.label === "High"){
+   return "Lipless Crankbait";
+ }
+
+ return "Medium Diving Crankbait";
+}
+ 
   function adjustLuresForStructure(lures, structure) {
 
   return lures.map(lure => {
@@ -1516,7 +1565,9 @@ if(time === "Morning" || time === "Evening"){
 }
 lures = [...new Set(lures)]; 
 lures = adjustLuresForStructure(lures, structure);
-
+lures = lures.map(lure =>
+  refineCrankbaitType(lure, season, structure, depthZone, forage, aggression)
+);
 let scoredLures = lures
   .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
