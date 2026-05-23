@@ -367,7 +367,7 @@ padding:14px;
 <div id="out" class="card"></div>
 
 <script>
-function getDepthZone(species, season, structure){
+function getDepthZone(species, season, structure, lakeType, forage, wind, cloud, time){
 
   // OPEN WATER
   if (structure === "Open Water") {
@@ -376,40 +376,214 @@ function getDepthZone(species, season, structure){
     return "8–20 ft suspended";
   }
 
-  // SMALLMOUTH
-  if (species === "Smallmouth") {
-    if (season === "Winter") return "20–40 ft";
-    if (season === "Pre-Spawn") return "10–20 ft";
-    if (season === "Spawn") return "3–10 ft";
-    if (season === "Post-Spawn") return "10–20 ft";
-    return "15–30 ft";
+ // SMALLMOUTH
+if (species === "Smallmouth") {
+
+  // GREAT LAKES / ST CLAIR STYLE
+  if(lakeType === "Great Lake" || lakeType === "Natural Smallmouth Flat Lake"){
+
+    if(season === "Winter") return "20–40 ft";
+
+    if(season === "Pre-Spawn") return "8–18 ft";
+
+    if(season === "Spawn") return "3–10 ft";
+
+    if(season === "Post-Spawn") return "6–15 ft";
+
+    if(season === "Summer"){
+
+      if(forage === "Goby") return "8–20 ft";
+
+      if(wind === "Heavy" || cloud === "Overcast") return "5–15 ft";
+
+      return "10–25 ft";
+    }
+
+    if(season === "Fall"){
+      return "5–15 ft";
+    }
   }
 
-  // WALLEYE
-  if (species === "Walleye") {
-    if (season === "Winter") return "25–50 ft";
-    if (season === "Pre-Spawn") return "10–20 ft";
-    if (season === "Spawn") return "5–15 ft";
-    if (season === "Post-Spawn") return "15–30 ft";
+  // HIGHLAND / DEEP CLEAR LAKES
+  if(lakeType === "Highland Reservoir" || lakeType === "Highland Smallmouth Lake"){
+
+    if(season === "Winter") return "25–45 ft";
+
+    if(season === "Pre-Spawn") return "12–25 ft";
+
+    if(season === "Spawn") return "5–15 ft";
+
+    if(season === "Post-Spawn") return "12–25 ft";
+
+    if(season === "Summer"){
+
+      if(time === "Morning" || time === "Evening"){
+        return "10–20 ft";
+      }
+
+      return "18–35 ft";
+    }
+
+    if(season === "Fall"){
+      return "8–20 ft";
+    }
+  }
+
+  // DEFAULT SMALLMOUTH
+  if (season === "Winter") return "20–40 ft";
+  if (season === "Pre-Spawn") return "10–20 ft";
+  if (season === "Spawn") return "3–10 ft";
+  if (season === "Post-Spawn") return "10–20 ft";
+  return "15–30 ft";
+}
+
+ // WALLEYE
+if (species === "Walleye") {
+
+  // GREAT LAKES / BIG WATER
+  if(lakeType === "Great Lake"){
+    if(season === "Winter") return "25–50 ft";
+    if(season === "Pre-Spawn") return "10–25 ft";
+    if(season === "Spawn") return "4–12 ft";
+    if(season === "Post-Spawn") return "12–30 ft";
+
+    if(season === "Summer"){
+      if(time === "Morning" || time === "Evening" || time === "Night"){
+        return "12–25 ft";
+      }
+      return "25–45 ft";
+    }
+
+    if(season === "Fall") return "10–30 ft";
+  }
+
+  // HIGHLAND RESERVOIRS
+  if(lakeType === "Highland Reservoir"){
+    if(season === "Winter") return "30–55 ft";
+    if(season === "Pre-Spawn") return "12–25 ft";
+    if(season === "Spawn") return "5–15 ft";
+    if(season === "Post-Spawn") return "15–30 ft";
+
+    if(season === "Summer"){
+      if(time === "Night") return "8–20 ft";
+      return "25–45 ft";
+    }
+
+    if(season === "Fall") return "12–30 ft";
+  }
+
+  // DEFAULT WALLEYE
+  if (season === "Winter") return "25–50 ft";
+  if (season === "Pre-Spawn") return "10–20 ft";
+  if (season === "Spawn") return "5–15 ft";
+  if (season === "Post-Spawn") return "15–30 ft";
+
+  if(season === "Summer"){
+    if(time === "Morning" || time === "Evening" || time === "Night"){
+      return "10–25 ft";
+    }
     return "20–40 ft";
   }
 
+  if(season === "Fall") return "10–25 ft";
+
+  return "20–40 ft";
+}
+
   // CRAPPIE
-  if (species === "Crappie") {
-    if (season === "Winter") return "15–25 ft";
-    if (season === "Pre-Spawn") return "6–12 ft";
-    if (season === "Spawn") return "2–6 ft";
-    if (season === "Post-Spawn") return "8–15 ft";
+if (species === "Crappie") {
+
+  if(season === "Winter"){
+    if(structure === "Timber" || structure === "Open Water") return "15–30 ft";
+    return "12–25 ft";
+  }
+
+  if(season === "Pre-Spawn"){
+    if(structure === "Docks" || structure === "Timber") return "6–15 ft";
+    return "4–12 ft";
+  }
+
+  if(season === "Spawn"){
+    if(structure === "Docks" || structure === "Timber") return "2–8 ft";
+    return "1–6 ft";
+  }
+
+  if(season === "Post-Spawn"){
+    if(structure === "Docks" || structure === "Timber") return "8–18 ft";
+    return "6–15 ft";
+  }
+
+  if(season === "Summer"){
+    if(time === "Morning" || time === "Evening") return "8–15 ft";
+    if(structure === "Open Water" || structure === "Timber") return "12–25 ft";
     return "10–20 ft";
   }
 
-  // LARGEMOUTH (default)
+  if(season === "Fall"){
+    if(structure === "Open Water" || structure === "Timber") return "8–20 ft";
+    return "6–15 ft";
+  }
+
+  return "10–20 ft";
+}
+
+  // LARGEMOUTH / DEFAULT
+if (species === "Largemouth" || species === "Unknown") {
+
+  // SHALLOW GRASS LAKES
+  if(lakeType === "Shallow Grass Lake"){
+    if(season === "Winter") return "4–10 ft";
+    if(season === "Pre-Spawn") return "3–8 ft";
+    if(season === "Spawn") return "1–5 ft";
+    if(season === "Post-Spawn") return "3–8 ft";
+    if(season === "Summer") return "4–12 ft";
+    if(season === "Fall") return "2–8 ft";
+  }
+
+  // TVA GRASS LAKES
+  if(lakeType === "TVA Grass Lake"){
+    if(season === "Winter") return "8–18 ft";
+    if(season === "Pre-Spawn") return "4–10 ft";
+    if(season === "Spawn") return "1–6 ft";
+    if(season === "Post-Spawn") return "4–12 ft";
+    if(season === "Summer"){
+      if(time === "Morning" || time === "Evening") return "3–10 ft";
+      return "8–18 ft";
+    }
+    if(season === "Fall") return "2–10 ft";
+  }
+
+  // TVA LEDGE LAKES
+  if(lakeType === "TVA Ledge Lake"){
+    if(season === "Winter") return "12–25 ft";
+    if(season === "Pre-Spawn") return "6–15 ft";
+    if(season === "Spawn") return "1–6 ft";
+    if(season === "Post-Spawn") return "6–15 ft";
+    if(season === "Summer") return "12–25 ft";
+    if(season === "Fall") return "4–12 ft";
+  }
+
+  // HIGHLAND RESERVOIRS
+  if(lakeType === "Highland Reservoir"){
+    if(season === "Winter") return "15–35 ft";
+    if(season === "Pre-Spawn") return "8–18 ft";
+    if(season === "Spawn") return "2–8 ft";
+    if(season === "Post-Spawn") return "8–18 ft";
+    if(season === "Summer"){
+      if(time === "Morning" || time === "Evening") return "8–18 ft";
+      return "15–30 ft";
+    }
+    if(season === "Fall") return "5–15 ft";
+  }
+
+  // DEFAULT LARGEMOUTH
   if (season === "Winter") return "15–30 ft";
   if (season === "Pre-Spawn") return "8–15 ft";
   if (season === "Spawn") return "2–6 ft";
   if (season === "Post-Spawn") return "8–15 ft";
-   if (season === "Fall") return "5–15 ft";
+  if (season === "Fall") return "5–15 ft";
   return "10–25 ft";
+}
  
 }
 const lakeForage = {
@@ -1693,10 +1867,31 @@ location = adjustLocationForLakeType(location, lakeType, season, species);
 let migration = getSeasonalMigration(season, species, lakeType);
 let forageBehavior = getForageBehavior(forage, season, lakeType);
 let feedingWindow = getFeedingWindow(time, pressure, cloud, wind, season);
-let depthZone = getDepthZone(species, season, structure);
+let depthZone = getDepthZone(
+  species,
+  season,
+  structure,
+  lakeType,
+  forage,
+  wind,
+  cloud,
+  time
+);
 
-if(structure==="Weedlines" && season!=="Winter"){
- depthZone = "3–10 ft";
+if(structure === "Weedlines" && season !== "Winter"){
+
+ if(lakeType === "Highland Reservoir" || lakeType === "Great Lake" || lakeType === "Natural Smallmouth Flat Lake"){
+   depthZone = "8–18 ft";
+ }
+
+ else if(lakeType === "Shallow Grass Lake" || lakeType === "TVA Grass Lake"){
+   depthZone = "3–10 ft";
+ }
+
+ else{
+   depthZone = "5–15 ft";
+ }
+
 }
 let mood = getMood(pressure, cloud);
 let aggression = getAggressionIndex(species, season, temp, pressure, cloud, wind, time, clarity); 
