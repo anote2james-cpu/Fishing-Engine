@@ -1877,6 +1877,84 @@ let temp = parseFloat(tempInput) || 60;
  let structure=document.getElementById("structure").value;
  let composition=document.getElementById("composition").value;
  let forage=document.getElementById("forage").value;
+
+ // LARGEMOUTH COMPOSITION LOGIC
+
+let largemouthStructurePosition = "";
+
+if(species === "Largemouth"){
+
+  // GRASS / WEEDS
+  if(structure === "Weedlines"){
+
+    if(composition === "Grass"){
+      largemouthStructurePosition =
+      "Focus on outside grass edges, holes, points, irregularities, and bluegill activity.";
+    }
+
+    else{
+      largemouthStructurePosition =
+      "Focus on the cleanest grass edges, isolated cover, and nearby depth changes.";
+    }
+  }
+
+  // WOOD / TIMBER
+  if(structure === "Timber"){
+
+    if(composition === "Wood" || composition === "Brush"){
+      largemouthStructurePosition =
+      "Target the darkest shade, isolated wood, trunk intersections, and nearby depth changes.";
+    }
+
+    else{
+      largemouthStructurePosition =
+      "Focus on isolated timber near deeper water or bait activity.";
+    }
+  }
+
+  // POINTS
+  if(structure === "Points"){
+
+    if(composition === "Rock" || composition === "Gravel"){
+      largemouthStructurePosition =
+      "Focus on transition rock, chunk rock, secondary points, and bait movement.";
+    }
+
+    else{
+      largemouthStructurePosition =
+      "Focus on points with nearby cover, brush, grass, or bait access.";
+    }
+  }
+
+  // DOCKS
+  if(structure === "Docks"){
+
+    largemouthStructurePosition =
+    "Focus on darkest shade, deeper dock posts, walkways, ladders, and bluegill presence.";
+  }
+
+  // FLATS
+  if(structure === "Flats"){
+
+    largemouthStructurePosition =
+    "Do not fish empty water. Focus on isolated cover, drains, grass clumps, and subtle depth changes.";
+  }
+
+  // DROP-OFFS
+  if(structure === "Drop-offs"){
+
+    largemouthStructurePosition =
+    "Focus on the top edge, bottom edge, nearby bait, brush, and transition zones.";
+  }
+
+  // OPEN WATER
+  if(structure === "Open Water"){
+
+    largemouthStructurePosition =
+    "Stay around visible bait, suspended activity, current, or roaming fish groups.";
+  }
+
+}
 let time=document.getElementById("time").value;
 let pressure = document.getElementById("pressure").value;
 let cloud = document.getElementById("cloud").value;  
@@ -1885,6 +1963,9 @@ let cloud = document.getElementById("cloud").value;
  let lakeType = lakeTypes[lake] || "Unknown";
  
  let location=getLocation(species,season,structure,wind,forage);
+ if(largemouthStructurePosition){
+  location += " " + largemouthStructurePosition;
+}
 location = adjustLocationForLakeType(location, lakeType, season, species);
 let migration = getSeasonalMigration(season, species, lakeType);
 let forageBehavior = getForageBehavior(forage, season, lakeType);
