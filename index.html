@@ -456,19 +456,57 @@ function applyLake(){
 
 function getSeason(t){
 
- if(t <= 40) return "Winter";
+ if(t <= 45) return "Winter";
 
- if(t <= 55) return "Pre-Spawn";
+ if(t <= 58) return "Pre-Spawn";
 
- if(t <= 68) return "Spawn";
+ if(t <= 70) return "Spawn";
 
- if(t <= 75) return "Post-Spawn";
+ if(t <= 78) return "Post-Spawn";
 
- if(t <= 82) return "Summer";
+ if(t <= 88) return "Summer";
 
  return "Fall";
 }
 
+function getSpeciesSeason(species, t){
+
+ if(species === "Walleye"){
+   if(t <= 38) return "Winter";
+   if(t <= 45) return "Pre-Spawn";
+   if(t <= 50) return "Spawn";
+   if(t <= 60) return "Post-Spawn";
+   if(t <= 82) return "Summer";
+   return "Fall";
+ }
+
+ if(species === "Crappie"){
+   if(t <= 45) return "Winter";
+   if(t <= 55) return "Pre-Spawn";
+   if(t <= 65) return "Spawn";
+   if(t <= 72) return "Post-Spawn";
+   if(t <= 85) return "Summer";
+   return "Fall";
+ }
+
+ if(species === "Smallmouth"){
+   if(t <= 42) return "Winter";
+   if(t <= 55) return "Pre-Spawn";
+   if(t <= 65) return "Spawn";
+   if(t <= 72) return "Post-Spawn";
+   if(t <= 84) return "Summer";
+   return "Fall";
+ }
+
+ // Largemouth and Unknown
+ if(t <= 45) return "Winter";
+ if(t <= 58) return "Pre-Spawn";
+ if(t <= 70) return "Spawn";
+ if(t <= 78) return "Post-Spawn";
+ if(t <= 88) return "Summer";
+ return "Fall";
+}
+ 
 function getColors(clarity){
 
  if(clarity==="Clear"){
@@ -1647,7 +1685,7 @@ let time=document.getElementById("time").value;
 let pressure = document.getElementById("pressure").value;
 let cloud = document.getElementById("cloud").value;  
   let viewMode=document.getElementById("viewMode").value;
- let season=getSeason(temp);
+ let season=getSpeciesSeason(species, temp);
  let lakeType = lakeTypes[lake] || "Unknown";
  
  let location=getLocation(species,season,structure,wind,forage);
