@@ -1483,6 +1483,65 @@ function scoreLure(lure, season, species, structure, forage, wind, clarity, pres
    if(clean.includes("jig") || clean.includes("swimbait") || clean.includes("topwater") || clean.includes("spinnerbait")) score += 8;
  }
 
+// COMPOSITION
+
+if(composition === "Rock" || composition === "Gravel" || composition === "Shell"){
+
+  if(clean.includes("football")) score += 14;
+
+  if(clean.includes("tube")) score += 12;
+
+  if(clean.includes("ned")) score += 10;
+
+  if(clean.includes("jig")) score += 8;
+
+  if(clean.includes("crankbait")) score += 8;
+
+  if(clean.includes("topwater")) score -= 6;
+}
+
+if(composition === "Grass"){
+
+  if(clean.includes("swim jig")) score += 14;
+
+  if(clean.includes("chatterbait")) score += 14;
+
+  if(clean.includes("weedless")) score += 12;
+
+  if(clean.includes("spinnerbait")) score += 8;
+
+  if(clean.includes("topwater")) score += 8;
+
+  if(clean.includes("football")) score -= 10;
+}
+
+if(composition === "Wood" || composition === "Brush"){
+
+  if(clean.includes("flipping")) score += 14;
+
+  if(clean.includes("texas")) score += 12;
+
+  if(clean.includes("jig")) score += 10;
+
+  if(clean.includes("squarebill")) score += 8;
+
+  if(clean.includes("treble")) score -= 6;
+}
+
+if(composition === "Sand" || composition === "Clay"){
+
+  if(clean.includes("swimbait")) score += 8;
+
+  if(clean.includes("spinnerbait")) score += 6;
+
+  if(clean.includes("crankbait")) score += 6;
+}
+
+if(composition === "Mixed"){
+
+  score += 4;
+}
+ 
  // CONDITIONS
  if(wind !== "Calm"){
    if(clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait")) score += 8;
@@ -2023,7 +2082,7 @@ let scoredLures = lures
   .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
     name: lure,
-   score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression)
+   score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression, composition)
   }))
   .sort((a, b) => b.score - a.score);
 
