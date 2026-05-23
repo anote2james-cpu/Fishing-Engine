@@ -1462,6 +1462,50 @@ function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
 
  return style;
 }
+
+function getStayOrLeaveDecision(season, structure, forage, aggression, stability, confidence){
+
+ let decision = "";
+
+ if(confidence >= 80 && stability.label === "Stable"){
+   decision = "Stay and refine. This pattern has enough strength to work the area carefully.";
+ }
+
+ else if(confidence >= 70 && aggression.label === "High"){
+   decision = "Cover water. Fish fast, but do not abandon the area until you check for bait or active fish.";
+ }
+
+ else if(stability.label === "Search Pattern"){
+   decision = "Move quickly. If you do not see bait, activity, or get bit soon, leave and find fresh water.";
+ }
+
+ else if(aggression.label === "Low" || aggression.label === "Negative"){
+   decision = "Slow down on high-percentage targets, but do not waste time in dead water.";
+ }
+
+ else{
+   decision = "Give it a fair test, then adjust. Look for bait, bites, cover, or better conditions nearby.";
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   decision += " Bait presence is the deciding factor.";
+ }
+
+ if(structure === "Open Water"){
+   decision += " Do not stay in open water without seeing bait or fish on electronics.";
+ }
+
+ if(season === "Winter"){
+   decision += " In cold water, fish may be grouped tightly, so slow down once you find life.";
+ }
+
+ if(season === "Fall"){
+   decision += " In fall, keep moving until you locate bait-driven activity.";
+ }
+
+ return decision;
+}
+ 
  function getElectronicsGuidance(species, season, structure, forage, aggression, stability, depthZone){
 
  let guidance = [];
@@ -1734,6 +1778,14 @@ if (species === "Crappie" && structure === "Open Water") confidence -= 6;
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 let confidenceColor = getStatusColor(confidence);
+let stayOrLeave = getStayOrLeaveDecision(
+  season,
+  structure,
+  forage,
+  aggression,
+  stability,
+  confidence
+); 
 let quickOutput = `
 <div class="result-card">
   <div class="muted">🎯 TARGET</div>
@@ -1834,6 +1886,11 @@ let quickOutput = `
 </div>
 
 <div class="result-card">
+  <div class="muted">🚦 STAY OR LEAVE</div>
+  <div class="small">${stayOrLeave}</div>
+</div>
+
+<div class="result-card">
   <div class="muted">⚠️ WATCH OUT</div>
   <div class="small">${avoidPatterns[0]}</div>
 </div>
@@ -1890,6 +1947,12 @@ let detailedOutput = `
   <div class="muted">📡 ELECTRONICS / SEARCH STRATEGY</div>
   ${electronicsText}
 </div>
+
+<div class="result-card">
+  <div class="muted">🚦 STAY OR LEAVE</div>
+  <div class="small">${stayOrLeave}</div>
+</div>
+
 <div class="result-card">
   <div class="muted">⚠️ AVOID</div>
   ${avoidText}
