@@ -2499,15 +2499,21 @@ let detailedOutput = `
   </div>
 </details>
 
-<div class="result-card">
-  <div class="muted">🐟 FORAGE BEHAVIOR</div>
-  <div class="small">${forageBehavior}</div>
-</div>
+<details class="collapsible-card">
+  <summary>🐟 FORAGE BEHAVIOR</summary>
 
-<div class="result-card">
-  <div class="muted">⏱️ FEEDING WINDOW</div>
-  <div class="small">${feedingWindow}</div>
-</div>
+  <div class="collapsible-content">
+    <div class="small">${forageBehavior}</div>
+  </div>
+</details>
+
+<details class="collapsible-card">
+  <summary>⏱️ FEEDING WINDOW</summary>
+
+  <div class="collapsible-content">
+    <div class="small">${feedingWindow}</div>
+  </div>
+</details>
 
 <div class="result-card">
   <div class="muted">⚡ AGGRESSION INDEX</div>
@@ -2523,27 +2529,39 @@ let detailedOutput = `
   <div class="muted">🗺️ MAP SEARCH</div>
   <div class="small">${mapGuidance}</div>
 </div>
-<div class="result-card">
-  <div class="muted">📡 ELECTRONICS / SEARCH STRATEGY</div>
-  ${electronicsText}
-</div>
+
+<details class="collapsible-card">
+  <summary>📡 ELECTRONICS / SEARCH STRATEGY</summary>
+
+  <div class="collapsible-content">
+    ${electronicsText}
+  </div>
+</details>
 
 <div class="result-card">
   <div class="muted">🚦 STAY OR LEAVE</div>
   <div class="small">${stayOrLeave}</div>
 </div>
 
-<div class="result-card">
-  <div class="muted">🧭 MULTI-PATTERN PLAN</div>
-  <div class="small"><strong>Primary Pattern:</strong> ${multiPatternPlan.primary}</div>
-  <div class="small"><strong>Secondary Pattern:</strong> ${multiPatternPlan.secondary}</div>
-  <div class="small"><strong>Emergency Fallback:</strong> ${multiPatternPlan.fallback}</div>
-</div>
+<details class="collapsible-card">
+  <summary>🧭 MULTI-PATTERN PLAN</summary>
 
-<div class="result-card">
-  <div class="muted">⚠️ AVOID</div>
-  ${avoidText}
-</div>
+  <div class="collapsible-content">
+    <div class="small"><strong>Primary Pattern:</strong> ${multiPatternPlan.primary}</div>
+
+    <div class="small"><strong>Secondary Pattern:</strong> ${multiPatternPlan.secondary}</div>
+
+    <div class="small"><strong>Emergency Fallback:</strong> ${multiPatternPlan.fallback}</div>
+  </div>
+</details>
+
+<details class="collapsible-card">
+  <summary>⚠️ AVOID</summary>
+
+  <div class="collapsible-content">
+    ${avoidText}
+  </div>
+</details>
 
 <div class="hero-bait">
   <div class="badge">PRIMARY BAIT</div>
