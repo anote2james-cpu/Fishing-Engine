@@ -200,6 +200,43 @@ padding:14px;
  padding:12px;
 }
 
+.collapsible-card{
+ background:#08141e;
+ border:1px solid #1e3a4d;
+ border-radius:16px;
+ padding:0;
+ margin:12px 0;
+ overflow:hidden;
+}
+
+.collapsible-card summary{
+ cursor:pointer;
+ list-style:none;
+ padding:14px;
+ font-size:13px;
+ font-weight:900;
+ color:#38bdf8;
+ letter-spacing:.3px;
+}
+
+.collapsible-card summary::-webkit-details-marker{
+ display:none;
+}
+
+.collapsible-card summary::after{
+ content:" +";
+ float:right;
+ color:#9fb3c8;
+}
+
+.collapsible-card[open] summary::after{
+ content:" −";
+}
+
+.collapsible-content{
+ padding:0 14px 14px 14px;
+} 
+
 .advanced summary{
  cursor:pointer;
  font-size:15px;
@@ -2454,10 +2491,13 @@ let detailedOutput = `
   <div class="small">Primary Depth Zone: ${depthZone} (${season} range)</div>
 </div>
 
-<div class="result-card">
-  <div class="muted">🧭 SEASONAL MOVEMENT</div>
-  <div class="small">${migration}</div>
-</div>
+<details class="collapsible-card">
+  <summary>🧭 SEASONAL MOVEMENT</summary>
+
+  <div class="collapsible-content">
+    <div class="small">${migration}</div>
+  </div>
+</details>
 
 <div class="result-card">
   <div class="muted">🐟 FORAGE BEHAVIOR</div>
