@@ -1800,6 +1800,57 @@ function getStayOrLeaveDecision(season, structure, forage, aggression, stability
 
  return decision;
 }
+
+ function getMultiPatternPlan(species, season, structure, forage, composition, aggression, stability, confidence){
+
+ let primary = "";
+ let secondary = "";
+ let fallback = "";
+
+ // PRIMARY PATTERN
+ if(confidence >= 75){
+   primary = "Commit to the recommended pattern first. The structure, forage, and conditions are aligned enough to give it a serious test.";
+ } else {
+   primary = "Start with the recommended pattern, but do not overcommit until you confirm bait, bites, or fish activity.";
+ }
+
+ // SECONDARY PATTERN
+ if(aggression.label === "High" || aggression.label === "Moderate"){
+   secondary = "If the first pattern does not produce, switch to a moving bait or cover water faster to locate active fish.";
+ } else {
+   secondary = "If the first pattern does not produce, slow down with bottom contact, shade, cover, or finesse presentations.";
+ }
+
+ // FALLBACK PATTERN
+ if(stability.label === "Search Pattern" || confidence < 60){
+   fallback = "If the area feels dead, leave quickly and search for bait, wind, current, shade, or a cleaner version of the same structure.";
+ } else {
+   fallback = "If bites stop, duplicate the same structure nearby before changing completely.";
+ }
+
+ // SPECIFIC ADJUSTMENTS
+ if(structure === "Weedlines" && composition === "Grass"){
+   secondary += " Check inside grass edges, outside edges, holes, points, and isolated clumps.";
+ }
+
+ if(structure === "Points" && (composition === "Rock" || composition === "Gravel")){
+   secondary += " Slide from the tip to the sides and then to the first break until you find the depth they are using.";
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   fallback += " If bait is missing, the pattern is probably missing.";
+ }
+
+ if(forage === "Crawfish" || forage === "Goby"){
+   fallback += " If bottom composition disappears, the pattern probably weakens.";
+ }
+
+ return {
+   primary: primary,
+   secondary: secondary,
+   fallback: fallback
+ };
+}
  
  function getElectronicsGuidance(species, season, structure, forage, aggression, stability, depthZone){
 
@@ -2251,6 +2302,18 @@ let stayOrLeave = getStayOrLeaveDecision(
   stability,
   confidence
 ); 
+
+let multiPatternPlan = getMultiPatternPlan(
+  species,
+  season,
+  structure,
+  forage,
+  composition,
+  aggression,
+  stability,
+  confidence
+);
+ 
 let quickOutput = `
 <div class="result-card">
   <div class="muted">🎯 TARGET</div>
@@ -2363,11 +2426,16 @@ let quickOutput = `
 </div>
 
 <div class="result-card">
+  <div class="muted">🧭 PATTERN PLAN</div>
+  <div class="small"><strong>Primary:</strong> ${multiPatternPlan.primary}</div>
+  <div class="small"><strong>Secondary:</strong> ${multiPatternPlan.secondary}</div>
+  <div class="small"><strong>Fallback:</strong> ${multiPatternPlan.fallback}</div>
+</div>
+
+<div class="result-card">
   <div class="muted">⚠️ WATCH OUT</div>
   <div class="small">${avoidPatterns[0]}</div>
 </div>
-
-
 
 
 `;
@@ -2423,6 +2491,13 @@ let detailedOutput = `
 <div class="result-card">
   <div class="muted">🚦 STAY OR LEAVE</div>
   <div class="small">${stayOrLeave}</div>
+</div>
+
+<div class="result-card">
+  <div class="muted">🧭 MULTI-PATTERN PLAN</div>
+  <div class="small"><strong>Primary Pattern:</strong> ${multiPatternPlan.primary}</div>
+  <div class="small"><strong>Secondary Pattern:</strong> ${multiPatternPlan.secondary}</div>
+  <div class="small"><strong>Emergency Fallback:</strong> ${multiPatternPlan.fallback}</div>
 </div>
 
 <div class="result-card">
