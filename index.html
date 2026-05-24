@@ -2173,7 +2173,59 @@ if (wind === "Calm") confidence -= 3;
 if (species === "Smallmouth" && structure === "Weedlines") confidence -= 8;
 if (species === "Walleye" && structure === "Flats") confidence -= 8;
 if (species === "Crappie" && structure === "Open Water") confidence -= 6;
-  
+
+// STRUCTURE + COMPOSITION CONFIDENCE
+
+if(structure === "Points" || structure === "Drop-offs"){
+
+  if(composition === "Rock" || composition === "Gravel"){
+    confidence += 8;
+  }
+
+  if(forage === "Crawfish" || forage === "Goby"){
+    confidence += 8;
+  }
+}
+
+if(structure === "Weedlines"){
+
+  if(composition === "Grass"){
+    confidence += 10;
+  }
+
+  if(forage === "Bluegill" || forage === "Shiners"){
+    confidence += 8;
+  }
+}
+
+if(structure === "Timber" || structure === "Docks"){
+
+  if(composition === "Wood" || composition === "Brush"){
+    confidence += 8;
+  }
+}
+
+// BAD CONDITION PENALTIES
+
+if(pressure === "Rising" && wind === "Calm" && cloud === "Sunny"){
+  confidence -= 10;
+}
+
+if(structure === "Open Water" &&
+   forage !== "Shad" &&
+   forage !== "Alewife" &&
+   forage !== "Herring"){
+  confidence -= 10;
+}
+
+if(season === "Winter" && structure === "Flats"){
+  confidence -= 8;
+}
+
+if(season === "Spawn" && structure === "Open Water"){
+  confidence -= 14;
+}
+ 
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 let confidenceColor = getStatusColor(confidence);
