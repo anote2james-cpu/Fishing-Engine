@@ -2174,16 +2174,20 @@ if (species === "Smallmouth" && structure === "Weedlines") confidence -= 8;
 if (species === "Walleye" && structure === "Flats") confidence -= 8;
 if (species === "Crappie" && structure === "Open Water") confidence -= 6;
 
+let confidenceReasons = [];
+ 
 // STRUCTURE + COMPOSITION CONFIDENCE
 
 if(structure === "Points" || structure === "Drop-offs"){
 
   if(composition === "Rock" || composition === "Gravel"){
     confidence += 8;
+    confidenceReasons.push("Rock or gravel improves this structure pattern.");
   }
 
   if(forage === "Crawfish" || forage === "Goby"){
     confidence += 8;
+    confidenceReasons.push("Bottom-oriented forage matches this structure well.");
   }
 }
 
@@ -2191,10 +2195,12 @@ if(structure === "Weedlines"){
 
   if(composition === "Grass"){
     confidence += 10;
+    confidenceReasons.push("Healthy grass strongly supports this pattern.");
   }
 
   if(forage === "Bluegill" || forage === "Shiners"){
     confidence += 8;
+    confidenceReasons.push("Natural forage activity supports this grass pattern.");
   }
 }
 
@@ -2202,6 +2208,7 @@ if(structure === "Timber" || structure === "Docks"){
 
   if(composition === "Wood" || composition === "Brush"){
     confidence += 8;
+    confidenceReasons.push("Wood cover increases ambush potential.");
   }
 }
 
@@ -2209,6 +2216,7 @@ if(structure === "Timber" || structure === "Docks"){
 
 if(pressure === "Rising" && wind === "Calm" && cloud === "Sunny"){
   confidence -= 10;
+  confidenceReasons.push("Rising pressure with calm sunny conditions lowers pattern consistency.");
 }
 
 if(structure === "Open Water" &&
@@ -2216,19 +2224,25 @@ if(structure === "Open Water" &&
    forage !== "Alewife" &&
    forage !== "Herring"){
   confidence -= 10;
+  confidenceReasons.push("Open water without roaming bait lowers consistency.");
 }
 
 if(season === "Winter" && structure === "Flats"){
   confidence -= 8;
+  confidenceReasons.push("Featureless flats are lower percentage in winter.");
 }
 
 if(season === "Spawn" && structure === "Open Water"){
   confidence -= 14;
+  confidenceReasons.push("Open-water spawn patterns are less dependable.");
 }
  
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 let confidenceColor = getStatusColor(confidence);
+let confidenceReasonText = confidenceReasons.length
+  ? confidenceReasons.map(item => `<div class="small">• ${item}</div>`).join("")
+  : `<div class="small">No major confidence conflicts found.</div>`; 
 let stayOrLeave = getStayOrLeaveDecision(
   season,
   structure,
@@ -2303,6 +2317,13 @@ let quickOutput = `
         <div class="mini-meter-bar" style="width:${confidence}%; background:${confidenceColor};"></div>
       </div>
     </div>
+
+<div class="status-item">
+  <div class="status-top">
+    <span>🧠 Why Confidence?</span>
+  </div>
+  ${confidenceReasonText}
+</div>
 
     <div class="status-item">
       <div class="status-top">
@@ -2445,6 +2466,13 @@ let detailedOutput = `
         <div class="mini-meter-bar" style="width:${confidence}%; background:${confidenceColor};"></div>
       </div>
     </div>
+
+   <div class="status-item">
+  <div class="status-top">
+    <span>🧠 Why Confidence?</span>
+  </div>
+  ${confidenceReasonText}
+</div> 
 
     <div class="status-item">
       <div class="status-top">
