@@ -793,10 +793,11 @@ function getColors(clarity){
 }
 
 function getStatusColor(score){
-  if(score >= 75) return "#22c55e"; // strong green
-  if(score >= 55) return "#eab308"; // moderate yellow
-  if(score >= 35) return "#f97316"; // low orange
-  return "#ef4444"; // poor red
+  if(score >= 80) return "#22c55e"; // strong green
+  if(score >= 65) return "#84cc16"; // good lime
+  if(score >= 50) return "#eab308"; // caution yellow
+  if(score >= 35) return "#f97316"; // unstable orange
+  return "#ef4444"; // danger red
 }
  
 function getAggressionIndex(species, season, temp, pressure, cloud, wind, time, clarity){
@@ -2479,6 +2480,8 @@ if(season === "Spawn" && structure === "Open Water"){
 // CLAMP RANGE
 confidence = Math.max(40, Math.min(95, confidence));
 let confidenceColor = getStatusColor(confidence);
+let aggressionColor = getStatusColor(aggression.score);
+let stabilityColor = getStatusColor(stability.score); 
 let confidenceReasonText = confidenceReasons.length
   ? confidenceReasons.map(item => `<div class="small">• ${item}</div>`).join("")
   : `<div class="small">No major confidence conflicts found.</div>`; 
