@@ -36,6 +36,16 @@ button{
  letter-spacing:.5px;
 }
 
+.sticky-action{
+ position:sticky;
+ bottom:12px;
+ z-index:20;
+}
+
+.sticky-action button{
+ box-shadow:0 0 28px rgba(56,189,248,.45);
+}
+ 
 .primary{
  background:#38bdf8;
  color:#001018;
@@ -434,7 +444,9 @@ label{
 </select>
  
 </details>
-<button class="primary" onclick="run()">THROW THIS</button>
+<div class="sticky-action">
+  <button class="primary" onclick="run()">THROW THIS</button>
+</div>
 </div>
 
 <div id="out" class="card"></div>
