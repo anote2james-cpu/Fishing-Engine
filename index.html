@@ -439,8 +439,8 @@ label{
 </select>
 <label>View Mode</label>
 <select id="viewMode">
-<option>Quick</option>
-<option>Detailed</option>
+<option>Simple</option>
+<option>Tournament</option>
 </select>
  
 </details>
@@ -2825,7 +2825,7 @@ ${electronicsSection}
 
 `;
 document.getElementById("out").innerHTML =
-  viewMode === "Quick" ? quickOutput : detailedOutput;
+  viewMode === "Simple" ? quickOutput : detailedOutput;
 }
 
 </script>
