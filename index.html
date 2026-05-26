@@ -2381,6 +2381,19 @@ colors = [...new Set(colors)];
  let electronicsText = electronicsGuidance
   .map(item => `<div class="small">• ${item}</div>`)
   .join("");
+
+ let electronicsSection = electronicsGuidance.length > 1
+  ? `
+<details class="collapsible-card">
+  <summary>📡 ELECTRONICS / SEARCH STRATEGY</summary>
+
+  <div class="collapsible-content">
+    ${electronicsText}
+  </div>
+</details>
+`
+  : "";
+ 
  let confidence = 45;
 
  
@@ -2699,13 +2712,7 @@ let detailedOutput = `
   <div class="small">${mapGuidance}</div>
 </div>
 
-<details class="collapsible-card">
-  <summary>📡 ELECTRONICS / SEARCH STRATEGY</summary>
-
-  <div class="collapsible-content">
-    ${electronicsText}
-  </div>
-</details>
+${electronicsSection}
 
 <div class="result-card">
   <div class="muted">🚦 STAY OR LEAVE</div>
