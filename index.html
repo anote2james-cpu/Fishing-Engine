@@ -1888,6 +1888,120 @@ function getStayOrLeaveDecision(season, structure, forage, aggression, stability
    fallback: fallback
  };
 }
+
+function getWhyThisBait(lure, season, species, structure, forage, composition, pressure, wind, cloud, time, clarity, aggression){
+
+ let reasons = [];
+ let clean = lure.toLowerCase();
+
+ // STRUCTURE REASONS
+ if(structure === "Points" || structure === "Drop-offs"){
+   if(clean.includes("football") || clean.includes("jig") || clean.includes("tube") || clean.includes("ned")){
+     reasons.push("This bait matches bottom-oriented fish on points, breaks, and hard structure.");
+   }
+ }
+
+ if(structure === "Weedlines"){
+   if(clean.includes("swim jig") || clean.includes("chatterbait") || clean.includes("weedless") || clean.includes("spinnerbait")){
+     reasons.push("This bait works well through grass edges, holes, lanes, and irregular weed growth.");
+   }
+ }
+
+ if(structure === "Docks" || structure === "Timber"){
+   if(clean.includes("flipping") || clean.includes("texas") || clean.includes("jig")){
+     reasons.push("This bait can be placed tight to shade, wood, posts, and isolated cover.");
+   }
+ }
+
+ if(structure === "Open Water"){
+   if(clean.includes("swimbait") || clean.includes("jerkbait") || clean.includes("minnow")){
+     reasons.push("This bait matches suspended fish and bait-driven open-water movement.");
+   }
+ }
+
+ // COMPOSITION REASONS
+ if(composition === "Rock" || composition === "Gravel" || composition === "Shell"){
+   if(clean.includes("football") || clean.includes("tube") || clean.includes("ned") || clean.includes("jig")){
+     reasons.push("Rock, gravel, or shell favors bottom-contact presentations.");
+   }
+ }
+
+ if(composition === "Grass"){
+   if(clean.includes("swim jig") || clean.includes("chatterbait") || clean.includes("weedless") || clean.includes("topwater")){
+     reasons.push("Grass favors baits that can move cleanly through cover without constantly hanging up.");
+   }
+ }
+
+ if(composition === "Wood" || composition === "Brush"){
+   if(clean.includes("flipping") || clean.includes("texas") || clean.includes("jig")){
+     reasons.push("Wood and brush favor compact baits that can be pitched accurately into cover.");
+   }
+ }
+
+ // FORAGE REASONS
+ if(forage === "Crawfish" || forage === "Goby"){
+   if(clean.includes("jig") || clean.includes("tube") || clean.includes("ned") || clean.includes("texas")){
+     reasons.push("The selected forage is bottom-oriented, so keeping the bait near bottom makes sense.");
+   }
+ }
+
+ if(forage === "Shad" || forage === "Alewife" || forage === "Herring"){
+   if(clean.includes("swimbait") || clean.includes("jerkbait") || clean.includes("crankbait") || clean.includes("spinnerbait")){
+     reasons.push("The selected forage is baitfish-oriented, so this bait imitates roaming prey.");
+   }
+ }
+
+ if(forage === "Bluegill" || forage === "Shiners"){
+   if(clean.includes("jig") || clean.includes("swimbait") || clean.includes("topwater") || clean.includes("spinnerbait")){
+     reasons.push("This bait can imitate shallow cover-oriented forage like bluegill or shiners.");
+   }
+ }
+
+ // CONDITION REASONS
+ if(pressure === "Rising"){
+   if(clean.includes("jig") || clean.includes("texas") || clean.includes("tube") || clean.includes("ned")){
+     reasons.push("Rising pressure often favors slower, more precise presentations.");
+   }
+ }
+
+ if(wind !== "Calm"){
+   if(clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait")){
+     reasons.push("Wind can make moving baits stronger by positioning bait and reducing visibility.");
+   }
+ }
+
+ if(wind === "Calm" && clarity === "Clear"){
+   if(clean.includes("jig") || clean.includes("ned") || clean.includes("tube") || clean.includes("texas")){
+     reasons.push("Calm, clear water favors natural, slower, more controlled presentations.");
+   }
+ }
+
+ if(cloud === "Overcast" || cloud === "Rainy"){
+   if(clean.includes("topwater") || clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait")){
+     reasons.push("Cloud cover can extend the bite window and make reaction baits stronger.");
+   }
+ }
+
+ // AGGRESSION REASONS
+ if(aggression.label === "High"){
+   if(clean.includes("spinnerbait") || clean.includes("chatterbait") || clean.includes("crankbait") || clean.includes("swimbait") || clean.includes("topwater")){
+     reasons.push("Fish aggression is high enough to justify covering water and triggering reaction bites.");
+   }
+ }
+
+ if(aggression.label === "Low" || aggression.label === "Negative"){
+   if(clean.includes("jig") || clean.includes("texas") || clean.includes("ned") || clean.includes("tube")){
+     reasons.push("Low aggression favors slower baits that stay in the strike zone longer.");
+   }
+ }
+
+ // FALLBACK
+ if(reasons.length === 0){
+   reasons.push("This bait was selected because it had the best overall fit across season, structure, forage, and conditions.");
+ }
+
+ return reasons;
+}
  
  function getElectronicsGuidance(species, season, structure, forage, aggression, stability, depthZone){
 
@@ -2192,7 +2306,25 @@ if(lures.length < 3){
 
 lures = lures.slice(0, 3);
 lures = pairLureDepth(lures, depthZone, species);
-let recommendedWeight = getRecommendedWeight(lures[0], depthZone, wind, structure); 
+let recommendedWeight = getRecommendedWeight(lures[0], depthZone, wind, structure);
+let whyThisBait = getWhyThisBait(
+  lures[0],
+  season,
+  species,
+  structure,
+  forage,
+  composition,
+  pressure,
+  wind,
+  cloud,
+  time,
+  clarity,
+  aggression
+);
+
+let whyThisBaitText = whyThisBait
+  .map(item => `<div class="small">• ${item}</div>`)
+  .join(""); 
 let baseRetrieve = getRetrieveByLure(lures[0], season, species);
 
 let retrieve = getAdaptiveRetrieve(
@@ -2391,6 +2523,10 @@ let quickOutput = `
   <div class="small" style="margin-top:10px;">
     ${colors.slice(0,3).join(" • ")}
   </div>
+  <div class="result-card">
+  <div class="muted">🧠 WHY THIS BAIT?</div>
+  ${whyThisBaitText}
+</div>
 </div>
 <div class="result-card">
 
