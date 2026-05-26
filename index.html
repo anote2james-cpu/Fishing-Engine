@@ -437,20 +437,25 @@ label{
 <option>Stable</option>
 <option>Falling</option>
 </select>
-<label>View Mode</label>
-<select id="viewMode">
-<option>Simple</option>
-<option>Tournament</option>
-</select>
- 
+
 </details>
+
+<div class="card" style="margin-top:12px;">
+  <div class="muted">🎛️ APP MODE</div>
+
+  <label>View Mode</label>
+  <select id="viewMode">
+    <option>Simple</option>
+    <option>Tournament</option>
+  </select>
+</div>
+
 <div class="sticky-action">
   <button class="primary" onclick="run()">THROW THIS</button>
 </div>
 </div>
 
 <div id="out" class="card"></div>
-
 <script>
 function getDepthZone(species, season, structure, lakeType, forage, wind, cloud, time, composition){
 
