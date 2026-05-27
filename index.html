@@ -2207,7 +2207,91 @@ function getWhyThisBait(lure, season, species, structure, forage, composition, p
 
  return guidance;
 } 
-  
+
+function getSonarInterpretation() {
+  const usingElectronics = document.getElementById("usingElectronics")?.value || "No";
+  const bait = document.getElementById("sonarBait")?.value || "Unknown";
+  const fish = document.getElementById("sonarFish")?.value || "Unknown";
+  const bottom = document.getElementById("sonarBottom")?.value || "Unknown";
+
+  if (usingElectronics !== "Yes") {
+    return {
+      active: false,
+      summary: "",
+      locationAdjustment: "",
+      lureAdjustment: "",
+      confidenceBoost: 0
+    };
+  }
+
+  let summary = [];
+  let locationAdjustment = [];
+  let lureAdjustment = [];
+  let confidenceBoost = 0;
+
+  // BAIT INTERPRETATION
+  if (bait === "Heavy Bait") {
+    summary.push("Electronics show heavy bait presence.");
+    locationAdjustment.push("Stay near the bait and look for nearby cover, breaks, points, or depth changes.");
+    lureAdjustment.push("Use baitfish-imitating lures such as swimbaits, crankbaits, jerkbaits, spinnerbaits, or underspins.");
+    confidenceBoost += 8;
+  } else if (bait === "Scattered Bait") {
+    summary.push("Electronics show scattered bait.");
+    locationAdjustment.push("Fish are likely roaming or loosely relating to the area.");
+    lureAdjustment.push("Use search baits first, then slow down when fish are found.");
+    confidenceBoost += 4;
+  } else if (bait === "No Bait Seen") {
+    summary.push("No bait is showing on electronics.");
+    locationAdjustment.push("Do not stay long unless cover, bottom change, or fish activity is present.");
+    lureAdjustment.push("Use high-efficiency search baits or move to better-looking water.");
+    confidenceBoost -= 5;
+  }
+
+  // FISH INTERPRETATION
+  if (fish === "Fish Tight to Bottom") {
+    summary.push("Fish are tight to the bottom.");
+    locationAdjustment.push("Target bottom-contact areas such as drops, points, ledges, rocks, and hard bottom.");
+    lureAdjustment.push("Favor bottom-contact baits like jigs, Texas rigs, Ned rigs, tubes, dropshots, and football jigs.");
+    confidenceBoost += 7;
+  } else if (fish === "Fish Suspended") {
+    summary.push("Fish are suspended.");
+    locationAdjustment.push("Focus on the depth level where fish are suspended, especially near bait or vertical structure.");
+    lureAdjustment.push("Favor swimbaits, jerkbaits, dropshots, Damiki-style rigs, spoons, or forward-facing sonar presentations.");
+    confidenceBoost += 6;
+  } else if (fish === "Fish Around Cover") {
+    summary.push("Fish are relating to cover.");
+    locationAdjustment.push("Make repeated casts to the highest-percentage cover and shade edges.");
+    lureAdjustment.push("Favor jigs, Texas rigs, spinnerbaits, squarebills, chatterbaits, or flipping presentations.");
+    confidenceBoost += 7;
+  } else if (fish === "No Fish Seen") {
+    summary.push("No fish are visible on electronics.");
+    locationAdjustment.push("Use this as a low-confidence area unless shallow cover, wind, current, or visible activity says otherwise.");
+    lureAdjustment.push("Keep moving and use search presentations until life is found.");
+    confidenceBoost -= 6;
+  }
+
+  // BOTTOM INTERPRETATION
+  if (bottom === "Hard Bottom") {
+    summary.push("Hard bottom is present.");
+    locationAdjustment.push("Hard bottom increases the value of the area, especially for smallmouth, prespawn fish, and bottom-oriented patterns.");
+    lureAdjustment.push("Bottom-contact baits become stronger choices.");
+    confidenceBoost += 5;
+  } else if (bottom === "Soft Bottom") {
+    summary.push("Soft bottom is present.");
+    locationAdjustment.push("Soft bottom is usually lower percentage unless vegetation, bait, or fish are present.");
+    lureAdjustment.push("Avoid dragging too slowly if the bait fouls; use lighter or cleaner presentations.");
+    confidenceBoost -= 2;
+  }
+
+  return {
+    active: true,
+    summary: summary.join(" "),
+    locationAdjustment: locationAdjustment.join(" "),
+    lureAdjustment: lureAdjustment.join(" "),
+    confidenceBoost
+  };
+}
+ 
 function run(){
   let lake=document.getElementById("lake").value;
  let species=document.getElementById("species").value;
@@ -2299,15 +2383,23 @@ if(species === "Largemouth"){
 let time=document.getElementById("time").value;
 let pressure = document.getElementById("pressure").value;
 let cloud = document.getElementById("cloud").value;  
+let sonar = getSonarInterpretation();
   let viewMode=document.getElementById("viewMode").value;
  let season=getSpeciesSeason(species, temp);
  let lakeType = lakeTypes[lake] || "Unknown";
  
  let location=getLocation(species,season,structure,wind,forage);
- if(largemouthStructurePosition){
+
+if(sonar.locationAdjustment){
+ location += " " + sonar.locationAdjustment;
+}
+
+if(largemouthStructurePosition){
  location += ". " + largemouthStructurePosition;
 }
+
 location = adjustLocationForLakeType(location, lakeType, season, species);
+ 
 let migration = getSeasonalMigration(season, species, lakeType);
 let forageBehavior = getForageBehavior(forage, season, lakeType);
 let feedingWindow = getFeedingWindow(time, pressure, cloud, wind, season);
@@ -2453,6 +2545,8 @@ if(forage === "Shad" && (structure === "Open Water" || structure === "Flats")) c
 if(structure === "Weedlines" && species === "Largemouth") confidence += 6;
 if(structure === "Docks" && species === "Largemouth") confidence += 5;
 if(structure === "Open Water" && species === "Smallmouth") confidence += 5;
+
+confidence += sonar.confidenceBoost; 
  
 // LURE QUALITY
 if(topLureScore >= 85) confidence += 8;
