@@ -442,11 +442,44 @@ label{
 <details class="advanced">
   <summary>📡 Electronics / Sonar</summary>
 
-  <div class="small">
-    Optional sonar inputs. Leave these alone if you are not using electronics.
-  </div>
+  
+<div class="small">
+  Optional sonar inputs. Leave these alone if you are not using electronics.
+</div>
+
+<label>Using Electronics?</label>
+<select id="usingElectronics">
+  <option>No</option>
+  <option>Yes</option>
+</select>
+
+<label>Bait Presence</label>
+  <select id="sonarBait">
+    <option>Unknown</option>
+    <option>No Bait Seen</option>
+    <option>Scattered Bait</option>
+    <option>Heavy Bait</option>
+  </select>
+
+  <label>Fish Seen</label>
+  <select id="sonarFish">
+    <option>Unknown</option>
+    <option>No Fish Seen</option>
+    <option>Fish Tight to Bottom</option>
+    <option>Fish Suspended</option>
+    <option>Fish Around Cover</option>
+  </select>
+
+  <label>Bottom Hardness</label>
+  <select id="sonarBottom">
+    <option>Unknown</option>
+    <option>Soft Bottom</option>
+    <option>Hard Bottom</option>
+    <option>Mixed Bottom</option>
+  </select>
 
 </details>
+
 <div class="card" style="margin-top:12px;">
   <div class="muted">🎛️ APP MODE</div>
 
