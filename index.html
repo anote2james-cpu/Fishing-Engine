@@ -2530,6 +2530,20 @@ colors = [...new Set(colors)];
 </details>
 `
   : "";
+
+let sonarSection = sonar.active
+  ? `
+<details class="collapsible-card" open>
+  <summary>📡 SONAR INTERPRETATION</summary>
+
+  <div class="collapsible-content">
+    <div class="small">${sonar.summary}</div>
+    <div class="small">${sonar.locationAdjustment}</div>
+    <div class="small">${sonar.lureAdjustment}</div>
+  </div>
+</details>
+`
+  : "";
  
  let confidence = 45;
 
@@ -2852,6 +2866,7 @@ let detailedOutput = `
 </div>
 
 ${electronicsSection}
+${sonarSection}
 
 <div class="result-card">
   <div class="muted">🚦 STAY OR LEAVE</div>
