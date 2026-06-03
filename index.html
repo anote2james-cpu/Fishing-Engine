@@ -2547,7 +2547,7 @@ let scoredLures = lures
   .sort((a, b) => b.score - a.score);
 
 let survivingLureCount = scoredLures.length;
-let topLureScore = scoredLures.length ? scoredLures[0].score : 50;
+let topLureScore = scoredLures.length ? Math.min(100, scoredLures[0].score) : 50;
 
 lures = scoredLures.map(item => item.name);
 
