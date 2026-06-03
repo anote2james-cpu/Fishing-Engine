@@ -1940,9 +1940,27 @@ function getFishingStyle(mood, pressure, cloud, wind, season, clarity){
  return style;
 }
 
-function getStayOrLeaveDecision(season, structure, forage, aggression, stability, confidence){
+function getStayOrLeaveDecision(season, structure, forage, aggression, stability, confidence, sonar){
 
  let decision = "";
+
+ if(sonar && sonar.active){
+  if(sonar.summary.includes("No bait") || sonar.summary.includes("No fish")){
+    return "Leave sooner. Electronics are not showing enough life here. Make a short test, then move if you do not get bit.";
+  }
+
+  if(sonar.summary.includes("heavy bait") && sonar.summary.includes("suspended")){
+    return "Stay and work the bait. Electronics show bait and suspended fish, so focus on the exact depth level where fish are positioned.";
+  }
+
+  if(sonar.summary.includes("tight to the bottom") && sonar.summary.includes("Hard bottom")){
+    return "Stay and slow down. Electronics show bottom-oriented fish on hard bottom, which is a high-value setup.";
+  }
+
+  if(sonar.summary.includes("relating to cover")){
+    return "Stay and pick apart the cover. Electronics show fish using cover, so make repeated accurate casts before leaving.";
+  }
+}
 
  if(confidence >= 80 && stability.label === "Stable"){
    decision = "Stay and refine. This pattern has enough strength to work the area carefully.";
@@ -2736,8 +2754,9 @@ let stayOrLeave = getStayOrLeaveDecision(
   forage,
   aggression,
   stability,
-  confidence
-); 
+  confidence,
+  sonar
+);
 
 let multiPatternPlan = getMultiPatternPlan(
   species,
