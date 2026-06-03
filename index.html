@@ -1530,6 +1530,74 @@ function shouldEliminateLure(lure, season, species, structure, forage, wind, cla
 
  return false;
 } 
+
+function getSonarLureScore(lure, sonar){
+  if(!sonar || !sonar.active){
+    return 0;
+  }
+
+  let score = 0;
+  let clean = lure.toLowerCase();
+
+  // Fish tight to bottom
+  if(sonar.summary.includes("tight to the bottom")){
+    if(clean.includes("jig")) score += 10;
+    if(clean.includes("tube")) score += 10;
+    if(clean.includes("ned")) score += 10;
+    if(clean.includes("texas")) score += 8;
+    if(clean.includes("football")) score += 10;
+    if(clean.includes("topwater")) score -= 12;
+    if(clean.includes("spinnerbait")) score -= 4;
+  }
+
+  // Suspended fish
+  if(sonar.summary.includes("suspended")){
+    if(clean.includes("swimbait")) score += 12;
+    if(clean.includes("jerkbait")) score += 12;
+    if(clean.includes("minnow")) score += 10;
+    if(clean.includes("drop")) score += 10;
+    if(clean.includes("jig")) score -= 4;
+    if(clean.includes("texas")) score -= 8;
+    if(clean.includes("football")) score -= 8;
+  }
+
+  // Fish around cover
+  if(sonar.summary.includes("relating to cover")){
+    if(clean.includes("jig")) score += 10;
+    if(clean.includes("texas")) score += 10;
+    if(clean.includes("spinnerbait")) score += 8;
+    if(clean.includes("chatterbait")) score += 8;
+    if(clean.includes("squarebill")) score += 8;
+  }
+
+  // Heavy bait
+  if(sonar.summary.includes("heavy bait")){
+    if(clean.includes("swimbait")) score += 10;
+    if(clean.includes("jerkbait")) score += 8;
+    if(clean.includes("crankbait")) score += 8;
+    if(clean.includes("spinnerbait")) score += 8;
+    if(clean.includes("chatterbait")) score += 8;
+  }
+
+  // No bait or no fish
+  if(sonar.summary.includes("No bait") || sonar.summary.includes("No fish")){
+    if(clean.includes("swimbait")) score -= 4;
+    if(clean.includes("topwater")) score -= 6;
+    if(clean.includes("spinnerbait")) score -= 4;
+  }
+
+  // Hard bottom
+  if(sonar.summary.includes("Hard bottom")){
+    if(clean.includes("football")) score += 8;
+    if(clean.includes("tube")) score += 8;
+    if(clean.includes("ned")) score += 8;
+    if(clean.includes("jig")) score += 6;
+    if(clean.includes("crankbait")) score += 5;
+  }
+
+  return score;
+}
+ 
 function scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression, composition){
 
  let score = 50;
@@ -2456,7 +2524,7 @@ let scoredLures = lures
   .filter(lure => !shouldEliminateLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time))
   .map(lure => ({
     name: lure,
-   score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression, composition)
+   score: scoreLure(lure, season, species, structure, forage, wind, clarity, pressure, cloud, time, aggression, composition) + getSonarLureScore(lure, sonar)
   }))
   .sort((a, b) => b.score - a.score);
 
